@@ -626,12 +626,26 @@ const PenduGame = (() => {
     });
   }
 
+  /** Met a jour le texte du bouton fin de partie. */
+  function setRestartLabel(won) {
+    const textEl = restartBtn.querySelector('.btn__text');
+    const iconEl = restartBtn.querySelector('.btn__icon');
+    if (won) {
+      textEl.textContent = 'Suivant';
+      iconEl.textContent = '→';
+    } else {
+      textEl.textContent = 'Recommencer';
+      iconEl.textContent = '↻';
+    }
+  }
+
   /** Victoire. */
   function triggerVictory() {
     const reward = LEVELS[currentLevel].reward;
     addGold(reward);
     showMessage(`Bravo ${playerName} 🎉 Le mot était « ${currentWord} » ! +${reward} 🪙`, 'success');
     endGame();
+    setRestartLabel(true);
     card.classList.add('victory');
     launchConfetti();
   }
@@ -641,6 +655,7 @@ const PenduGame = (() => {
     renderWord(true);
     showMessage(`Perdu ${playerName} 😢 Le mot était « ${currentWord} »`, 'error');
     endGame();
+    setRestartLabel(false);
     card.classList.add('defeat');
   }
 
