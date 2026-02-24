@@ -33,6 +33,18 @@
       <!-- Grille de jeux -->
       <div class="menu__grid">
 
+        <!-- Le Pendu — DISPONIBLE (vedette) -->
+        <article class="game-card game-card--featured" data-game="pendu" data-color="red">
+          <div class="game-card__badge game-card__badge--hot">Populaire 🔥</div>
+          <div class="game-card__icon">💀</div>
+          <h2 class="game-card__name">Le Pendu</h2>
+          <p class="game-card__desc">Devine le mot lettre par lettre, gagne de l'or et d&eacute;bloque les niveaux</p>
+          <button class="btn btn--play btn--play-red" data-navigate="pendu">
+            <span class="btn__text">Jouer</span>
+            <span class="btn__icon">→</span>
+          </button>
+        </article>
+
         <!-- Devine le Nombre — DISPONIBLE -->
         <article class="game-card" data-game="guess-number" data-color="purple">
           <div class="game-card__badge game-card__badge--available">Disponible</div>
@@ -64,18 +76,6 @@
           <p class="game-card__desc">Affronte l'ordinateur au classique PFC</p>
           <button class="btn btn--locked" disabled>
             <span class="btn__text">Bient&ocirc;t disponible</span>
-          </button>
-        </article>
-
-        <!-- Le Pendu — DISPONIBLE -->
-        <article class="game-card" data-game="pendu" data-color="red">
-          <div class="game-card__badge game-card__badge--available">Disponible</div>
-          <div class="game-card__icon">💀</div>
-          <h2 class="game-card__name">Le Pendu</h2>
-          <p class="game-card__desc">Devine le mot lettre par lettre en 6 erreurs max</p>
-          <button class="btn btn--play btn--play-red" data-navigate="pendu">
-            <span class="btn__text">Jouer</span>
-            <span class="btn__icon">→</span>
           </button>
         </article>
 

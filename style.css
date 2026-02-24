@@ -314,6 +314,31 @@ body::before {
   transform: translateY(-4px);
 }
 
+/* Carte vedette (mise en avant) */
+.game-card--featured {
+  border-color: rgba(255, 107, 107, 0.25);
+  box-shadow: 0 4px 32px rgba(255, 107, 107, 0.08),
+              0 0 0 1px rgba(255, 107, 107, 0.06);
+  animation: cardStagger var(--t-screen) var(--ease-out) both,
+             featuredPulse 3s 1.5s ease-in-out infinite;
+}
+
+@keyframes featuredPulse {
+  0%, 100% { box-shadow: 0 4px 32px rgba(255, 107, 107, 0.08), 0 0 0 1px rgba(255, 107, 107, 0.06); }
+  50%      { box-shadow: 0 6px 40px rgba(255, 107, 107, 0.15), 0 0 0 1px rgba(255, 107, 107, 0.12); }
+}
+
+.game-card--featured .game-card__icon {
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+/* Badge "Populaire" */
+.game-card__badge--hot {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(255, 169, 77, 0.15));
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.25);
+}
+
 /* Carte verrouillee */
 .game-card--locked {
   opacity: 0.55;
