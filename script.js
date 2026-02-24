@@ -342,6 +342,7 @@ const PenduGame = (() => {
   };
 
   const GOLD_STORAGE_KEY = 'lynasoft_pendu_gold';
+  const NAME_STORAGE_KEY = 'lynasoft_pendu_name';
 
   let currentLevel = 'easy';
   let maxErrors = 8;
@@ -801,6 +802,9 @@ const PenduGame = (() => {
 
     playerName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 
+    // Sauvegarder le prenom pour les prochaines visites
+    localStorage.setItem(NAME_STORAGE_KEY, playerName);
+
     // Sauvegarder dans la liste des joueurs
     AdminPanel.savePlayer(playerName);
 
@@ -857,8 +861,12 @@ const PenduGame = (() => {
 
   /** Initialise le jeu. */
   function init() {
-    // Charger l'or sauvegarde
+    // Charger l'or et le prenom sauvegardes
     loadGold();
+    const savedName = localStorage.getItem(NAME_STORAGE_KEY);
+    if (savedName) {
+      playerName = savedName;
+    }
 
     // Ecouteurs intro
     startBtn.addEventListener('click', goToDifficulty);
@@ -890,15 +898,15 @@ const PenduGame = (() => {
       showIntro();
       return;
     }
-    // Partie finie → choix de difficulte pour rejouer
-    if (gameOver) {
-      showDifficulty();
+    // Partie en cours (pas finie, ecran jeu visible) → reprendre
+    if (!gameOver && !gameScreen.classList.contains('hidden')) {
+      introScreen.classList.add('hidden');
+      diffScreen.classList.add('hidden');
+      gameScreen.classList.remove('hidden');
       return;
     }
-    // Partie en cours → reprendre
-    introScreen.classList.add('hidden');
-    diffScreen.classList.add('hidden');
-    gameScreen.classList.remove('hidden');
+    // Sinon → choix de difficulte (retour, partie finie, ou premiere visite)
+    showDifficulty();
   }
 
   return { init, onEnter };
