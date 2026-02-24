@@ -1149,14 +1149,14 @@ body::before {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   width: 100%;
-  max-width: 380px;
 }
 
 .pendu__key {
-  width: 2.2rem;
-  height: 2.2rem;
+  position: relative;
+  width: 2.6rem;
+  height: 2.6rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1165,7 +1165,7 @@ body::before {
   background: var(--bg-input);
   color: var(--text-primary);
   font-family: inherit;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 600;
   text-transform: uppercase;
   cursor: pointer;
@@ -1180,6 +1180,14 @@ body::before {
 
 .pendu__key:active {
   transform: scale(0.92);
+  background: var(--accent-glow);
+}
+
+/* Zone de tap elargie pour mobile (min 44px) */
+.pendu__key::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
 }
 
 .pendu__key--correct {
@@ -1819,16 +1827,16 @@ body::before {
     border-bottom-width: 2px;
   }
 
-  /* Clavier virtuel — plus compact */
+  /* Clavier virtuel — tactile, gros doigts */
   .pendu__keyboard {
-    gap: 0.25rem;
+    gap: 0.3rem;
     max-width: 100%;
   }
 
   .pendu__key {
-    width: 1.85rem;
-    height: 1.85rem;
-    font-size: 0.75rem;
+    flex: 0 0 calc((100% - 8 * 0.3rem) / 9);
+    height: 2.5rem;
+    font-size: 0.85rem;
     border-radius: 8px;
   }
 
@@ -1933,9 +1941,9 @@ body::before {
   }
 
   .pendu__key {
-    width: 1.65rem;
-    height: 1.65rem;
-    font-size: 0.7rem;
+    flex: 0 0 calc((100% - 8 * 0.25rem) / 9);
+    height: 2.2rem;
+    font-size: 0.8rem;
     border-radius: 6px;
   }
 
