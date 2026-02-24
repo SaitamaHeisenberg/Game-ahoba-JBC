@@ -659,6 +659,8 @@ const PenduGame = (() => {
     confettiContainer.appendChild(floatText);
   }
 
+  let autoNextTimer = null;
+
   /** Fin de partie. */
   function endGame() {
     gameOver = true;
@@ -688,10 +690,15 @@ const PenduGame = (() => {
     addGold(reward);
     showMessage(`Bravo ${playerName} 🎉 Le mot était « ${currentWord} » ! +${reward} 🪙`, 'success');
     endGame();
-    setRestartLabel(true);
+    restartBtn.classList.add('hidden'); // pas de bouton, passage auto
     card.classList.add('victory');
     launchConfetti();
     launchGoldCoins(reward);
+
+    // Passage automatique au mot suivant apres 3 secondes
+    autoNextTimer = setTimeout(() => {
+      reset();
+    }, 3000);
   }
 
   /** Defaite. */
@@ -734,6 +741,11 @@ const PenduGame = (() => {
 
   /** Reinitialise le jeu. */
   function reset() {
+    // Annuler le timer auto si actif
+    if (autoNextTimer) {
+      clearTimeout(autoNextTimer);
+      autoNextTimer = null;
+    }
     currentWord = pickWord();
     guessedLetters = new Set();
     errors = 0;
