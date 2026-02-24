@@ -310,7 +310,14 @@ const GuessNumberGame = (() => {
 // ============================================
 
 const PenduGame = (() => {
-  // Elements du DOM
+  // Elements du DOM — intro
+  const introScreen = document.getElementById('pendu-intro');
+  const gameScreen = document.getElementById('pendu-game');
+  const nameInput = document.getElementById('pendu-name-input');
+  const startBtn = document.getElementById('pendu-start-btn');
+  const playerNameEl = document.getElementById('pendu-player-name');
+
+  // Elements du DOM — jeu
   const card = document.getElementById('pendu-card');
   const wordContainer = document.getElementById('pendu-word');
   const keyboard = document.getElementById('pendu-keyboard');
@@ -318,6 +325,9 @@ const PenduGame = (() => {
   const messageEl = document.getElementById('pendu-message');
   const restartBtn = document.getElementById('pendu-restart');
   const confettiContainer = document.getElementById('confetti-container');
+
+  // Prenom du joueur
+  let playerName = '';
 
   // Parties du pendu (dans l'ordre d'apparition)
   const BODY_PARTS = [
@@ -497,7 +507,7 @@ const PenduGame = (() => {
 
   /** Victoire. */
   function triggerVictory() {
-    showMessage(`Bravo 🎉 Le mot était « ${currentWord} » !`, 'success');
+    showMessage(`Bravo ${playerName} 🎉 Le mot était « ${currentWord} » !`, 'success');
     endGame();
     card.classList.add('victory');
     launchConfetti();
@@ -505,8 +515,8 @@ const PenduGame = (() => {
 
   /** Defaite. */
   function triggerDefeat() {
-    renderWord(true); // Reveler toutes les lettres
-    showMessage(`Perdu 😢 Le mot était « ${currentWord} »`, 'error');
+    renderWord(true);
+    showMessage(`Perdu ${playerName} 😢 Le mot était « ${currentWord} »`, 'error');
     endGame();
     card.classList.add('defeat');
   }
@@ -570,10 +580,46 @@ const PenduGame = (() => {
     }
   }
 
+  /** Lance la partie apres saisie du prenom. */
+  function startGame() {
+    const name = nameInput.value.trim();
+    if (!name) {
+      nameInput.focus();
+      return;
+    }
+
+    // Stocker le prenom (premiere lettre majuscule)
+    playerName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    playerNameEl.textContent = `🎮 ${playerName}`;
+
+    // Basculer de l'intro vers le jeu
+    introScreen.classList.add('hidden');
+    gameScreen.classList.remove('hidden');
+
+    reset();
+  }
+
+  /** Revient a l'ecran d'intro (quand on retourne au menu puis revient). */
+  function showIntro() {
+    introScreen.classList.remove('hidden');
+    gameScreen.classList.add('hidden');
+    nameInput.value = playerName; // pre-remplir si deja saisi
+    setTimeout(() => nameInput.focus(), 350);
+  }
+
   /** Initialise le jeu. */
   function init() {
+    // Ecouteurs intro
+    startBtn.addEventListener('click', startGame);
+    nameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') startGame();
+    });
+
+    // Ecouteurs jeu
     restartBtn.addEventListener('click', reset);
     document.addEventListener('keydown', handleKeyPress);
+
+    // Preparer le jeu (cache)
     currentWord = pickWord();
     renderHint();
     renderWord();
@@ -582,6 +628,14 @@ const PenduGame = (() => {
 
   /** Appele quand on entre dans l'ecran. */
   function onEnter() {
+    // Si pas de prenom, montrer l'intro
+    if (!playerName) {
+      showIntro();
+      return;
+    }
+    // Sinon reprendre ou reset
+    introScreen.classList.add('hidden');
+    gameScreen.classList.remove('hidden');
     if (gameOver) reset();
   }
 

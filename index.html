@@ -183,11 +183,37 @@
         <div class="game-topbar__spacer"></div>
       </nav>
 
-      <!-- Contenu du jeu -->
-      <div class="game-content">
+      <!-- Ecran de saisie du prenom -->
+      <div class="game-content" id="pendu-intro">
+        <div class="card">
+          <div class="card__header">
+            <span style="font-size:2.5rem;display:block;margin-bottom:0.25rem">💀</span>
+            <h2 class="card__intro-title">Le Pendu</h2>
+            <p class="card__subtitle">Entre ton pr&eacute;nom pour commencer</p>
+          </div>
+          <div class="input-group">
+            <input
+              type="text"
+              id="pendu-name-input"
+              class="input-group__field"
+              placeholder="Ton pr&eacute;nom..."
+              maxlength="20"
+              autocomplete="off"
+            >
+            <button id="pendu-start-btn" class="btn btn--primary">
+              <span class="btn__text">Jouer</span>
+              <span class="btn__icon">→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenu du jeu (cache au debut) -->
+      <div class="game-content hidden" id="pendu-game">
         <div class="card" id="pendu-card">
 
           <div class="card__header">
+            <p class="pendu__player-name" id="pendu-player-name"></p>
             <p class="card__subtitle">Devine le mot cach&eacute; avant <strong>6 erreurs</strong></p>
           </div>
 
