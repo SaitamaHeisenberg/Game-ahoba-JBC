@@ -439,6 +439,7 @@ const PenduGame = (() => {
   // Elements DOM
   const hintEl = document.getElementById('pendu-hint');
   const goldEl = document.getElementById('pendu-gold');
+  const wordCountEl = document.getElementById('pendu-word-count');
 
   // Etat du jeu
   let currentEntry = null;
@@ -684,10 +685,26 @@ const PenduGame = (() => {
     restartBtn.classList.add('hidden');
     card.classList.remove('victory', 'defeat');
     confettiContainer.innerHTML = '';
+
+    // Afficher le nombre de lettres
+    wordCountEl.innerHTML = `Le mot contient <strong>${currentWord.length}</strong> lettre${currentWord.length > 1 ? 's' : ''}`;
+
+    // Mode facile : reveler la premiere lettre
+    if (currentLevel === 'easy') {
+      const firstLetter = currentWord[0];
+      guessedLetters.add(firstLetter);
+    }
+
     renderHint();
     renderWord();
     renderKeyboard();
     renderGold();
+
+    // Marquer la touche comme correcte si premiere lettre revelee
+    if (currentLevel === 'easy') {
+      const firstKey = keyboard.querySelector(`[data-letter="${currentWord[0]}"]`);
+      if (firstKey) firstKey.classList.add('pendu__key--correct');
+    }
   }
 
   /** Gestion du clavier physique. */
