@@ -3,63 +3,171 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Devine le Nombre</title>
+  <title>Lynasoft Games</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Particules de victoire -->
+  <!-- Confettis de victoire -->
   <div id="confetti-container" class="confetti-container"></div>
 
-  <main class="app">
-    <div class="card">
+  <!-- ============================================
+       ECRAN : MENU PRINCIPAL
+       ============================================ -->
+  <section id="screen-menu" class="screen screen--active">
+    <div class="menu">
 
-      <!-- En-tete -->
-      <div class="card__header">
-        <span class="card__icon">🎯</span>
-        <h1 class="card__title">Devine le Nombre</h1>
-        <p class="card__subtitle">Trouve le nombre secret entre 1 et 10</p>
+      <!-- En-tete du menu -->
+      <header class="menu__header">
+        <div class="menu__logo">
+          <span class="menu__logo-icon">🎮</span>
+          <h1 class="menu__title">Lynasoft <span class="menu__title-accent">Games</span></h1>
+        </div>
+        <p class="menu__subtitle">Choisis un jeu et amuse-toi</p>
+      </header>
+
+      <!-- Grille de jeux -->
+      <div class="menu__grid">
+
+        <!-- Devine le Nombre — DISPONIBLE -->
+        <article class="game-card" data-game="guess-number" data-color="purple">
+          <div class="game-card__badge game-card__badge--available">Disponible</div>
+          <div class="game-card__icon">🎯</div>
+          <h2 class="game-card__name">Devine le Nombre</h2>
+          <p class="game-card__desc">Trouve le nombre secret entre 1 et 10</p>
+          <button class="btn btn--play" data-navigate="guess-number">
+            <span class="btn__text">Jouer</span>
+            <span class="btn__icon">→</span>
+          </button>
+        </article>
+
+        <!-- Click Speed — BIENTOT -->
+        <article class="game-card game-card--locked" data-color="orange">
+          <div class="game-card__badge game-card__badge--soon">Bient&ocirc;t</div>
+          <div class="game-card__icon">⚡</div>
+          <h2 class="game-card__name">Click Speed</h2>
+          <p class="game-card__desc">Clique le plus vite possible en 10 secondes</p>
+          <button class="btn btn--locked" disabled>
+            <span class="btn__text">Bient&ocirc;t disponible</span>
+          </button>
+        </article>
+
+        <!-- Pierre-Feuille-Ciseaux — BIENTOT -->
+        <article class="game-card game-card--locked" data-color="teal">
+          <div class="game-card__badge game-card__badge--soon">Bient&ocirc;t</div>
+          <div class="game-card__icon">✊</div>
+          <h2 class="game-card__name">Pierre Feuille Ciseaux</h2>
+          <p class="game-card__desc">Affronte l'ordinateur au classique PFC</p>
+          <button class="btn btn--locked" disabled>
+            <span class="btn__text">Bient&ocirc;t disponible</span>
+          </button>
+        </article>
+
+        <!-- Le Pendu — BIENTOT -->
+        <article class="game-card game-card--locked" data-color="red">
+          <div class="game-card__badge game-card__badge--soon">Bient&ocirc;t</div>
+          <div class="game-card__icon">💀</div>
+          <h2 class="game-card__name">Le Pendu</h2>
+          <p class="game-card__desc">Devine le mot lettre par lettre</p>
+          <button class="btn btn--locked" disabled>
+            <span class="btn__text">Bient&ocirc;t disponible</span>
+          </button>
+        </article>
+
+        <!-- Snake — BIENTOT -->
+        <article class="game-card game-card--locked" data-color="green">
+          <div class="game-card__badge game-card__badge--soon">Bient&ocirc;t</div>
+          <div class="game-card__icon">🐍</div>
+          <h2 class="game-card__name">Snake</h2>
+          <p class="game-card__desc">Le serpent classique revisit&eacute;</p>
+          <button class="btn btn--locked" disabled>
+            <span class="btn__text">Bient&ocirc;t disponible</span>
+          </button>
+        </article>
+
+        <!-- Memory — BIENTOT -->
+        <article class="game-card game-card--locked" data-color="pink">
+          <div class="game-card__badge game-card__badge--soon">Bient&ocirc;t</div>
+          <div class="game-card__icon">🃏</div>
+          <h2 class="game-card__name">Memory Cards</h2>
+          <p class="game-card__desc">Retrouve les paires de cartes cach&eacute;es</p>
+          <button class="btn btn--locked" disabled>
+            <span class="btn__text">Bient&ocirc;t disponible</span>
+          </button>
+        </article>
+
       </div>
+    </div>
+  </section>
 
-      <!-- Compteur d'essais -->
-      <div class="attempts">
-        <span class="attempts__label">Essais</span>
-        <span class="attempts__count" id="attempts-count">0</span>
-      </div>
+  <!-- ============================================
+       ECRAN : JEU — DEVINE LE NOMBRE
+       ============================================ -->
+  <section id="screen-guess-number" class="screen" data-accent="purple">
+    <div class="game-view">
 
-      <!-- Zone de saisie -->
-      <div class="input-group">
-        <input
-          type="number"
-          id="guess-input"
-          class="input-group__field"
-          min="1"
-          max="10"
-          placeholder="1 — 10"
-          autocomplete="off"
-        >
-        <button id="guess-btn" class="btn btn--primary">
-          <span class="btn__text">Deviner</span>
-          <span class="btn__icon">→</span>
+      <!-- Barre du haut -->
+      <nav class="game-topbar">
+        <button class="btn btn--back" data-navigate="menu">
+          <span class="btn__icon">←</span>
+          <span class="btn__text">Menu</span>
         </button>
+        <h2 class="game-topbar__title">🎯 Devine le Nombre</h2>
+        <div class="game-topbar__spacer"></div>
+      </nav>
+
+      <!-- Contenu du jeu -->
+      <div class="game-content">
+        <div class="card" id="guess-card">
+
+          <div class="card__header">
+            <p class="card__subtitle">Trouve le nombre secret entre <strong>1</strong> et <strong>10</strong></p>
+          </div>
+
+          <!-- Compteur d'essais -->
+          <div class="attempts">
+            <span class="attempts__label">Essais</span>
+            <span class="attempts__count" id="attempts-count">0</span>
+          </div>
+
+          <!-- Zone de saisie -->
+          <div class="input-group">
+            <input
+              type="number"
+              id="guess-input"
+              class="input-group__field"
+              min="1"
+              max="10"
+              placeholder="1 — 10"
+              autocomplete="off"
+            >
+            <button id="guess-btn" class="btn btn--primary">
+              <span class="btn__text">Deviner</span>
+              <span class="btn__icon">→</span>
+            </button>
+          </div>
+
+          <!-- Message dynamique -->
+          <div id="message" class="message" aria-live="polite"></div>
+
+          <!-- Bouton recommencer -->
+          <button id="restart-btn" class="btn btn--ghost hidden">
+            <span class="btn__text">Recommencer</span>
+            <span class="btn__icon">↻</span>
+          </button>
+
+        </div>
       </div>
-
-      <!-- Message dynamique -->
-      <div id="message" class="message" aria-live="polite"></div>
-
-      <!-- Bouton recommencer -->
-      <button id="restart-btn" class="btn btn--ghost hidden">
-        <span class="btn__text">Recommencer</span>
-        <span class="btn__icon">↻</span>
-      </button>
 
     </div>
-  </main>
+  </section>
 
-  <!-- Footer -->
+  <!-- ============================================
+       FOOTER GLOBAL
+       ============================================ -->
   <footer class="footer">
     <div class="footer__line"></div>
     <p class="footer__text">
