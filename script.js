@@ -135,6 +135,9 @@ const GuessNumberGame = (() => {
   const attemptsEl = document.getElementById('attempts-count');
   const confettiContainer = document.getElementById('confetti-container');
 
+  // Configuration
+  const MAX_ATTEMPTS = 3;
+
   // Etat du jeu
   let secret = 0;
   let attempts = 0;
@@ -207,15 +210,27 @@ const GuessNumberGame = (() => {
     setTimeout(() => { confettiContainer.innerHTML = ''; }, 3500);
   }
 
-  /** Sequence de victoire. */
-  function triggerVictory() {
-    showMessage(`Bravo 🎉 C'était bien le ${secret} !`, 'success');
+  /** Desactive les controles (fin de partie). */
+  function endGame() {
     input.disabled = true;
     guessBtn.disabled = true;
     gameOver = true;
+    restartBtn.classList.remove('hidden');
+  }
+
+  /** Sequence de victoire. */
+  function triggerVictory() {
+    showMessage(`Bravo 🎉 C'était bien le ${secret} !`, 'success');
+    endGame();
     card.classList.add('victory');
     launchConfetti();
-    restartBtn.classList.remove('hidden');
+  }
+
+  /** Sequence de defaite. */
+  function triggerDefeat() {
+    showMessage(`Perdu 😢 Le nombre était ${secret}`, 'error');
+    endGame();
+    card.classList.add('defeat');
   }
 
   /** Traite une tentative. */
@@ -232,14 +247,21 @@ const GuessNumberGame = (() => {
     attempts++;
     updateAttempts();
 
-    if (result.value < secret) {
-      showMessage('Trop petit ! Essaie un nombre plus grand.', 'warning');
-    } else if (result.value > secret) {
-      showMessage('Trop grand ! Essaie un nombre plus petit.', 'warning');
-    } else {
+    if (result.value === secret) {
       triggerVictory();
       return;
     }
+
+    // Dernier essai rate → defaite
+    if (attempts >= MAX_ATTEMPTS) {
+      triggerDefeat();
+      return;
+    }
+
+    // Indice
+    const remaining = MAX_ATTEMPTS - attempts;
+    const hint = result.value < secret ? 'Trop petit !' : 'Trop grand !';
+    showMessage(`${hint} Plus que ${remaining} essai${remaining > 1 ? 's' : ''}.`, 'warning');
 
     input.value = '';
     input.focus();
@@ -256,7 +278,7 @@ const GuessNumberGame = (() => {
     guessBtn.disabled = false;
     hideMessage();
     restartBtn.classList.add('hidden');
-    card.classList.remove('victory');
+    card.classList.remove('victory', 'defeat');
     confettiContainer.innerHTML = '';
     input.focus();
   }

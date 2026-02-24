@@ -684,7 +684,7 @@ body::before {
 
 /* Victoire */
 .card.victory {
-  animation: victoryPulse 0.6s var(--ease-out);
+  animation: cardPulse 0.6s var(--ease-out);
   border-color: rgba(81, 207, 102, 0.35);
   box-shadow:
     0 4px 40px rgba(0, 0, 0, 0.4),
@@ -692,11 +692,31 @@ body::before {
     0 0 120px rgba(81, 207, 102, 0.05);
 }
 
-@keyframes victoryPulse {
+/* Defaite */
+.card.defeat {
+  animation: cardShake 0.5s var(--ease-out);
+  border-color: rgba(255, 107, 107, 0.35);
+  box-shadow:
+    0 4px 40px rgba(0, 0, 0, 0.4),
+    0 0 60px rgba(255, 107, 107, 0.1),
+    0 0 120px rgba(255, 107, 107, 0.05);
+}
+
+@keyframes cardPulse {
   0%  { transform: scale(1); }
   30% { transform: scale(1.02); }
   60% { transform: scale(0.99); }
   100%{ transform: scale(1); }
+}
+
+@keyframes cardShake {
+  0%   { transform: translateX(0); }
+  15%  { transform: translateX(-8px); }
+  30%  { transform: translateX(8px); }
+  45%  { transform: translateX(-5px); }
+  60%  { transform: translateX(5px); }
+  75%  { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
 }
 
 /* ============================================
