@@ -338,48 +338,85 @@ const PenduGame = (() => {
 
   const MAX_ERRORS = 6;
 
-  // Banque de mots avec indices { word, hint }
+  // Banque de mots variee avec indices fun { word, hint }
   const WORDS = [
-    { word: 'javascript', hint: 'Langage web cree en 1995, utilise pour rendre les pages interactives' },
-    { word: 'python',     hint: 'Langage au nom de serpent, populaire en IA et data science' },
-    { word: 'ordinateur', hint: 'Machine electronique sur ton bureau avec ecran, clavier et souris' },
-    { word: 'clavier',    hint: 'Peripherique AZERTY ou QWERTY sur lequel on tape du texte' },
-    { word: 'souris',     hint: 'Petit peripherique qu\'on deplace sur un tapis pour pointer et cliquer' },
-    { word: 'ecran',      hint: 'Surface lumineuse rectangulaire qui affiche images et texte' },
-    { word: 'programme',  hint: 'Suite d\'instructions ecrites par un developpeur pour l\'ordinateur' },
-    { word: 'internet',   hint: 'Reseau mondial qui connecte des milliards d\'appareils via HTTP' },
-    { word: 'serveur',    hint: 'Ordinateur distant qui stocke les sites web et repond aux requetes' },
-    { word: 'logiciel',   hint: 'Application installee sur un PC : Word, Chrome, VS Code...' },
-    { word: 'tableau',    hint: 'Structure de donnees avec des cases numerotees : array en anglais' },
-    { word: 'fonction',   hint: 'Bloc de code reutilisable qu\'on appelle avec des parentheses ()' },
-    { word: 'variable',   hint: 'Conteneur nomme qui stocke une valeur : let x = 5 par exemple' },
-    { word: 'boucle',     hint: 'Structure for ou while qui repete des instructions plusieurs fois' },
-    { word: 'fichier',    hint: 'Document enregistre sur le disque avec un nom et une extension (.txt, .js)' },
-    { word: 'reseau',     hint: 'Ensemble d\'ordinateurs relies entre eux par cables ou Wi-Fi' },
-    { word: 'donnees',    hint: 'Informations numeriques traitees par un programme : texte, chiffres, images' },
-    { word: 'memoire',    hint: 'Composant RAM de l\'ordinateur : stockage rapide mais temporaire' },
-    { word: 'disque',     hint: 'Support de stockage permanent : HDD magnetique ou SSD flash' },
-    { word: 'pixel',      hint: 'Le plus petit carre lumineux d\'un ecran, des millions forment une image' },
-    { word: 'navigateur', hint: 'Logiciel pour surfer sur le web : Chrome, Firefox, Edge, Safari' },
-    { word: 'console',    hint: 'Fenetre noire ou l\'on tape des commandes texte, aussi dans DevTools (F12)' },
-    { word: 'terminal',   hint: 'Application ligne de commande : bash, PowerShell, zsh' },
-    { word: 'binaire',    hint: 'Le langage de la machine : uniquement des 0 et des 1' },
-    { word: 'algorithme', hint: 'Recette pas a pas pour resoudre un probleme, comme trier une liste' },
-    { word: 'matrice',    hint: 'Tableau de nombres en lignes et colonnes, utilise en maths et 3D' },
-    { word: 'syntaxe',    hint: 'Les regles de grammaire d\'un langage : ou mettre les ; et les {}' },
-    { word: 'module',     hint: 'Fichier de code independant qu\'on importe avec import ou require' },
-    { word: 'paquet',     hint: 'Bibliotheque telechargeable via npm, pip ou apt-get' },
-    { word: 'classe',     hint: 'Plan de construction pour creer des objets : class Animal {}' },
-    { word: 'objet',      hint: 'Instance creee a partir d\'une classe avec new, possede des proprietes' },
-    { word: 'methode',    hint: 'Fonction definie dans une classe : objet.faireCeci()' },
-    { word: 'chaine',     hint: 'Suite de caracteres entre guillemets : "Bonjour" est un string' },
-    { word: 'nombre',     hint: 'Valeur numerique entiere ou decimale : 42, 3.14' },
-    { word: 'index',      hint: 'Position d\'un element dans un tableau, commence souvent a 0' },
-    { word: 'projet',     hint: 'Dossier contenant tous les fichiers d\'une application : src, package.json' },
-    { word: 'version',    hint: 'Numero comme v2.1.0 qui identifie l\'etat d\'un logiciel a un moment' },
-    { word: 'branche',    hint: 'Copie parallele du code dans Git : main, develop, feature/...' },
-    { word: 'fusion',     hint: 'Operation Git merge qui combine le travail de deux branches' },
-    { word: 'conflit',    hint: 'Quand deux branches modifient la meme ligne et que Git ne sait pas choisir' }
+    // --- Animaux ---
+    { word: 'elephant',   hint: 'Enorme animal gris avec une trompe, il n\'oublie jamais rien' },
+    { word: 'girafe',     hint: 'L\'animal au plus long cou, elle voit tout de la-haut' },
+    { word: 'dauphin',    hint: 'Mammifere marin super intelligent qui adore jouer dans les vagues' },
+    { word: 'papillon',   hint: 'Avant il rampait, maintenant il vole avec des ailes colorees' },
+    { word: 'crocodile',  hint: 'Reptile qui sourit tout le temps mais vaut mieux pas s\'approcher' },
+    { word: 'pingouin',   hint: 'Oiseau en costume noir et blanc qui ne sait pas voler' },
+    { word: 'cameleon',   hint: 'Le roi du deguisement, il change de couleur comme de chemise' },
+    { word: 'hamster',    hint: 'Petite boule de poils qui court dans sa roue toute la nuit' },
+
+    // --- Nourriture ---
+    { word: 'chocolat',   hint: 'Noir, au lait ou blanc, c\'est le meilleur remede a la tristesse' },
+    { word: 'croissant',  hint: 'Viennoiserie doree en forme de lune, star du petit-dejeuner francais' },
+    { word: 'spaghetti',  hint: 'Pates longues et fines, impossibles a manger proprement' },
+    { word: 'ananas',     hint: 'Fruit tropical avec une couronne, debat eternel : sur la pizza ou pas ?' },
+    { word: 'fromage',    hint: 'La France en a plus de 400 sortes, ca sent fort mais c\'est bon' },
+    { word: 'omelette',   hint: 'Des oeufs battus dans la poele, simple mais delicieux' },
+    { word: 'banane',     hint: 'Fruit jaune courbe, snack prefere des singes et des sportifs' },
+    { word: 'baguette',   hint: 'Pain long et croustillant, symbole de la France dans le monde' },
+
+    // --- Vie quotidienne ---
+    { word: 'parapluie',  hint: 'On l\'oublie toujours quand il pleut et on le perd quand il fait beau' },
+    { word: 'reveil',     hint: 'L\'objet le plus deteste le lundi matin, il sonne trop tot' },
+    { word: 'chaussette', hint: 'Toujours par deux mais il en manque toujours une apres la lessive' },
+    { word: 'escalier',   hint: 'Tu le prends quand l\'ascenseur est en panne, ca fait les jambes' },
+    { word: 'lunettes',   hint: 'Elles t\'aident a voir clair, mais tu les cherches alors qu\'elles sont sur ta tete' },
+    { word: 'sandwich',   hint: 'Repas express entre deux tranches de pain, sauveur de la pause dejeuner' },
+    { word: 'valise',     hint: 'Tu la remplis avant de partir en vacances, toujours trop petite' },
+    { word: 'miroir',     hint: 'Il te montre la verite chaque matin, que tu le veuilles ou non' },
+
+    // --- Nature ---
+    { word: 'volcan',     hint: 'Montagne en colere qui crache du feu et de la lave' },
+    { word: 'tonnerre',   hint: 'Le gros bruit apres l\'eclair, fait peur aux chiens' },
+    { word: 'avalanche',   hint: 'Enorme masse de neige qui devale la montagne a toute vitesse' },
+    { word: 'cascade',    hint: 'Chute d\'eau naturelle, comme une douche geante en foret' },
+    { word: 'iceberg',    hint: 'Bloc de glace flottant, 90% est cache sous l\'eau, comme tes talents' },
+    { word: 'aurore',     hint: 'Lumieres magiques dans le ciel du nord, vert et violet' },
+    { word: 'tornade',    hint: 'Vent qui tourne tres tres vite en forme d\'entonnoir, pas sympa du tout' },
+    { word: 'oasis',      hint: 'Petit coin de paradis avec eau et palmiers en plein desert' },
+
+    // --- Sport & loisirs ---
+    { word: 'football',   hint: 'Le sport ou 22 personnes courent apres un ballon pendant 90 minutes' },
+    { word: 'toboggan',   hint: 'Tu montes par l\'echelle et tu redescends en glissant, toujours fun' },
+    { word: 'karate',     hint: 'Art martial japonais, on casse des planches et on crie beaucoup' },
+    { word: 'trampoline', hint: 'Tu sautes dessus et tu touches presque le ciel, attention a l\'atterrissage' },
+    { word: 'guitare',    hint: 'Instrument a 6 cordes, tout le monde veut en jouer autour du feu' },
+    { word: 'dominos',    hint: 'Petites pieces qu\'on aligne pour les faire toutes tomber, satisfaisant !' },
+
+    // --- Ecole & culture ---
+    { word: 'dictionnaire', hint: 'Le livre qui connait tous les mots, il a reponse a tout' },
+    { word: 'tableau',    hint: 'Surface verte ou blanche ou le prof ecrit des trucs importants' },
+    { word: 'pyramide',   hint: 'Construction triangulaire en Egypte, les pharaons dormaient dedans' },
+    { word: 'dinosaure',  hint: 'Gros lezard disparu il y a 65 millions d\'annees, le T-Rex etait le boss' },
+    { word: 'astronaute', hint: 'Metier de reve : voyager dans l\'espace et flotter en apesanteur' },
+    { word: 'telescope',  hint: 'Tube magique pour voir les etoiles et les planetes de tres loin' },
+    { word: 'squelette',  hint: 'Tu en as un a l\'interieur de toi en ce moment, 206 os en tout' },
+    { word: 'tresor',     hint: 'Coffre rempli d\'or cache par les pirates, X marque l\'endroit' },
+
+    // --- Fun & absurde ---
+    { word: 'moustache',  hint: 'Poils au-dessus de la levre, style Mario Bros ou Salvador Dali' },
+    { word: 'sorciere',   hint: 'Vole sur un balai, a un chat noir et prepare des potions bizarres' },
+    { word: 'fantome',    hint: 'Drap blanc qui fait "Bouh !" dans les couloirs la nuit' },
+    { word: 'licorne',    hint: 'Cheval magique avec une corne, elles petent des arcs-en-ciel' },
+    { word: 'zombie',     hint: 'Mort-vivant qui marche lentement et veut manger ton cerveau' },
+    { word: 'vampire',    hint: 'Il dort le jour, sort la nuit et deteste l\'ail et les miroirs' },
+    { word: 'robot',      hint: 'Machine qui pourrait te remplacer au travail, bip boup bip' },
+    { word: 'ninja',      hint: 'Guerrier silencieux tout en noir, tu ne le vois jamais venir' },
+
+    // --- Informatique (quelques uns gardes) ---
+    { word: 'internet',   hint: 'Le truc magique qui te permet de regarder des videos de chats a 3h du mat' },
+    { word: 'ordinateur', hint: 'Machine qui fait tout : travail, jeux, films, et qui plante au pire moment' },
+    { word: 'clavier',    hint: 'Les boutons sur lesquels tu tapes, certains les maltraitent en jouant' },
+    { word: 'souris',     hint: 'Tu la bouges sur le bureau mais elle ne mange pas de fromage' },
+    { word: 'wifi',       hint: 'Quand il disparait, c\'est la panique a la maison' },
+    { word: 'batterie',   hint: 'Toujours a 1% quand tu en as le plus besoin' },
+    { word: 'selfie',     hint: 'Photo de toi par toi-meme, le bras tendu ou avec un baton' },
+    { word: 'emoji',      hint: 'Petite image jaune qui rit, pleure ou fait un clin d\'oeil dans tes messages' }
   ];
 
   const ALPHABET = 'abcdefghijklmnopqrstuvwxyz';
