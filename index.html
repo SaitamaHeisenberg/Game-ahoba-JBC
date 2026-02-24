@@ -231,7 +231,7 @@
         <div class="game-topbar__spacer"></div>
       </nav>
 
-      <!-- Ecran de saisie du prenom -->
+      <!-- Etape 1 : Saisie du prenom -->
       <div class="game-content" id="pendu-intro">
         <div class="card">
           <div class="card__header">
@@ -249,8 +249,35 @@
               autocomplete="off"
             >
             <button id="pendu-start-btn" class="btn btn--primary">
-              <span class="btn__text">Jouer</span>
+              <span class="btn__text">Suivant</span>
               <span class="btn__icon">→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Etape 2 : Choix de la difficulte -->
+      <div class="game-content hidden" id="pendu-difficulty">
+        <div class="card">
+          <div class="card__header">
+            <p class="pendu__player-name" id="pendu-diff-name"></p>
+            <p class="card__subtitle">Choisis ton niveau de difficult&eacute;</p>
+          </div>
+          <div class="pendu__levels">
+            <button class="pendu__level-btn pendu__level-btn--easy" data-level="easy">
+              <span class="pendu__level-icon">😎</span>
+              <span class="pendu__level-name">Facile</span>
+              <span class="pendu__level-desc">8 erreurs &bull; Mots courts &bull; Indice visible</span>
+            </button>
+            <button class="pendu__level-btn pendu__level-btn--medium" data-level="medium">
+              <span class="pendu__level-icon">🤔</span>
+              <span class="pendu__level-name">Moyen</span>
+              <span class="pendu__level-desc">6 erreurs &bull; Mots moyens &bull; Indice visible</span>
+            </button>
+            <button class="pendu__level-btn pendu__level-btn--hard" data-level="hard">
+              <span class="pendu__level-icon">💀</span>
+              <span class="pendu__level-name">Difficile</span>
+              <span class="pendu__level-desc">4 erreurs &bull; Mots longs &bull; Indice cach&eacute;</span>
             </button>
           </div>
         </div>
@@ -262,7 +289,7 @@
 
           <div class="card__header">
             <p class="pendu__player-name" id="pendu-player-name"></p>
-            <p class="card__subtitle">Devine le mot cach&eacute; avant <strong>6 erreurs</strong></p>
+            <span class="pendu__level-badge" id="pendu-level-badge"></span>
           </div>
 
           <!-- Dessin du pendu (SVG) -->
@@ -275,6 +302,8 @@
               <line x1="130" y1="20" x2="130" y2="45" class="pendu__rope" />
               <!-- Corps (cache par defaut, revele par JS) -->
               <circle cx="130" cy="60" r="15" class="pendu__part" id="pendu-head" />
+              <circle cx="124" cy="57" r="2" class="pendu__part" id="pendu-left-eye" />
+              <circle cx="136" cy="57" r="2" class="pendu__part" id="pendu-right-eye" />
               <line x1="130" y1="75" x2="130" y2="120" class="pendu__part" id="pendu-body" />
               <line x1="130" y1="90" x2="105" y2="110" class="pendu__part" id="pendu-left-arm" />
               <line x1="130" y1="90" x2="155" y2="110" class="pendu__part" id="pendu-right-arm" />
@@ -296,7 +325,7 @@
           <div class="attempts">
             <span class="attempts__label">Erreurs</span>
             <span class="attempts__count" id="pendu-errors">0</span>
-            <span class="attempts__label">/ 6</span>
+            <span class="attempts__label" id="pendu-max-label">/ 6</span>
           </div>
 
           <!-- Clavier virtuel -->

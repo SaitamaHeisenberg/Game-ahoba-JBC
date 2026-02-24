@@ -844,6 +844,132 @@ body::before {
   to   { opacity: 1; transform: scale(1); }
 }
 
+/* Boutons de difficulte */
+.pendu__levels {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.pendu__level-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 1rem 1.15rem;
+  background: var(--bg-input);
+  border: 1.5px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease-out);
+  text-align: left;
+  font-family: inherit;
+  color: var(--text-primary);
+}
+
+.pendu__level-btn:hover {
+  transform: translateY(-2px);
+}
+
+.pendu__level-btn:active {
+  transform: scale(0.98);
+}
+
+.pendu__level-btn--easy:hover {
+  border-color: var(--color-success);
+  box-shadow: 0 4px 20px rgba(81, 207, 102, 0.15);
+  background: rgba(81, 207, 102, 0.05);
+}
+
+.pendu__level-btn--medium:hover {
+  border-color: var(--color-warning);
+  box-shadow: 0 4px 20px rgba(255, 169, 77, 0.15);
+  background: rgba(255, 169, 77, 0.05);
+}
+
+.pendu__level-btn--hard:hover {
+  border-color: var(--color-error);
+  box-shadow: 0 4px 20px rgba(255, 107, 107, 0.15);
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.pendu__level-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.pendu__level-name {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.pendu__level-desc {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+/* Badge de difficulte dans le jeu */
+.pendu__level-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+  margin-top: 0.15rem;
+}
+
+.pendu__level-badge--easy {
+  background: rgba(81, 207, 102, 0.1);
+  color: var(--color-success);
+  border: 1px solid rgba(81, 207, 102, 0.2);
+}
+
+.pendu__level-badge--medium {
+  background: rgba(255, 169, 77, 0.1);
+  color: var(--color-warning);
+  border: 1px solid rgba(255, 169, 77, 0.2);
+}
+
+.pendu__level-badge--hard {
+  background: rgba(255, 107, 107, 0.1);
+  color: var(--color-error);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+}
+
+/* Indice cache (mode difficile) */
+.pendu__hint--hidden {
+  filter: blur(6px);
+  user-select: none;
+  cursor: pointer;
+  transition: filter var(--t-smooth);
+  position: relative;
+}
+
+.pendu__hint--hidden:hover {
+  filter: blur(3px);
+}
+
+.pendu__hint--hidden::after {
+  content: 'Cliquer pour reveler';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  filter: blur(0);
+}
+
 /* Indice */
 .pendu__hint {
   display: flex;

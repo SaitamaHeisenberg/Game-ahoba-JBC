@@ -310,12 +310,17 @@ const GuessNumberGame = (() => {
 // ============================================
 
 const PenduGame = (() => {
-  // Elements du DOM — intro
+  // Elements du DOM — intro & difficulte
   const introScreen = document.getElementById('pendu-intro');
+  const diffScreen = document.getElementById('pendu-difficulty');
   const gameScreen = document.getElementById('pendu-game');
   const nameInput = document.getElementById('pendu-name-input');
   const startBtn = document.getElementById('pendu-start-btn');
   const playerNameEl = document.getElementById('pendu-player-name');
+  const diffNameEl = document.getElementById('pendu-diff-name');
+  const levelBadge = document.getElementById('pendu-level-badge');
+  const maxLabel = document.getElementById('pendu-max-label');
+  const hintContainer = document.querySelector('.pendu__hint');
 
   // Elements du DOM — jeu
   const card = document.getElementById('pendu-card');
@@ -329,94 +334,101 @@ const PenduGame = (() => {
   // Prenom du joueur
   let playerName = '';
 
-  // Parties du pendu (dans l'ordre d'apparition)
-  const BODY_PARTS = [
-    'pendu-head', 'pendu-body',
+  // Configuration des niveaux
+  const LEVELS = {
+    easy:   { label: 'Facile',   emoji: '😎', maxErrors: 8, css: 'easy' },
+    medium: { label: 'Moyen',    emoji: '🤔', maxErrors: 6, css: 'medium' },
+    hard:   { label: 'Difficile', emoji: '💀', maxErrors: 4, css: 'hard' }
+  };
+
+  let currentLevel = 'medium';
+  let maxErrors = 6;
+
+  // Toutes les parties du pendu (8 max pour le mode facile)
+  const ALL_BODY_PARTS = [
+    'pendu-head', 'pendu-left-eye', 'pendu-right-eye', 'pendu-body',
     'pendu-left-arm', 'pendu-right-arm',
     'pendu-left-leg', 'pendu-right-leg'
   ];
 
-  const MAX_ERRORS = 6;
+  // Parties affichees selon le niveau
+  const PARTS_BY_LEVEL = {
+    easy:   ALL_BODY_PARTS,                              // 8 parties
+    medium: ['pendu-head', 'pendu-body',                 // 6 parties
+             'pendu-left-arm', 'pendu-right-arm',
+             'pendu-left-leg', 'pendu-right-leg'],
+    hard:   ['pendu-head', 'pendu-body',                 // 4 parties
+             'pendu-left-arm', 'pendu-right-arm']
+  };
 
-  // Banque de mots variee avec indices fun { word, hint }
+  // Banque de mots variee avec indices fun { word, hint, diff }
   const WORDS = [
-    // --- Animaux ---
-    { word: 'elephant',   hint: 'Enorme animal gris avec une trompe, il n\'oublie jamais rien' },
-    { word: 'girafe',     hint: 'L\'animal au plus long cou, elle voit tout de la-haut' },
-    { word: 'dauphin',    hint: 'Mammifere marin super intelligent qui adore jouer dans les vagues' },
-    { word: 'papillon',   hint: 'Avant il rampait, maintenant il vole avec des ailes colorees' },
-    { word: 'crocodile',  hint: 'Reptile qui sourit tout le temps mais vaut mieux pas s\'approcher' },
-    { word: 'pingouin',   hint: 'Oiseau en costume noir et blanc qui ne sait pas voler' },
-    { word: 'cameleon',   hint: 'Le roi du deguisement, il change de couleur comme de chemise' },
-    { word: 'hamster',    hint: 'Petite boule de poils qui court dans sa roue toute la nuit' },
+    // === FACILE (4-5 lettres) ===
+    { word: 'chat',    diff: 'easy', hint: 'Petit felin domestique qui ronronne et dort 16h par jour' },
+    { word: 'lune',    diff: 'easy', hint: 'Boule blanche dans le ciel la nuit, les loups lui parlent' },
+    { word: 'robot',   diff: 'easy', hint: 'Machine qui pourrait te remplacer au travail, bip boup bip' },
+    { word: 'ninja',   diff: 'easy', hint: 'Guerrier silencieux tout en noir, tu ne le vois jamais venir' },
+    { word: 'pizza',   diff: 'easy', hint: 'Ronde, avec du fromage fondu, la meilleure invention italienne' },
+    { word: 'emoji',   diff: 'easy', hint: 'Petite image jaune qui rit ou pleure dans tes messages' },
+    { word: 'wifi',    diff: 'easy', hint: 'Quand il disparait, c\'est la panique a la maison' },
+    { word: 'tigre',   diff: 'easy', hint: 'Gros chat orange a rayures noires, roi de la jungle' },
+    { word: 'fusee',   diff: 'easy', hint: 'Vehicule qui decolle vers l\'espace avec un gros boum' },
+    { word: 'pirate',  diff: 'easy', hint: 'Cache-oeil, perroquet sur l\'epaule et coffre au tresor' },
+    { word: 'plage',   diff: 'easy', hint: 'Sable chaud, vagues et coups de soleil garantis' },
+    { word: 'magie',   diff: 'easy', hint: 'L\'art de faire disparaitre des trucs, abracadabra !' },
+    { word: 'nuage',   diff: 'easy', hint: 'Mouton blanc qui flotte dans le ciel et parfois il pleure' },
+    { word: 'crane',   diff: 'easy', hint: 'Ta tete sans la peau, les pirates en mettent sur leur drapeau' },
+    { word: 'danse',   diff: 'easy', hint: 'Bouger son corps en rythme, personne ne resiste a la musique' },
+    { word: 'reine',   diff: 'easy', hint: 'Femme qui porte une couronne et dirige un royaume' },
+    { word: 'orage',   diff: 'easy', hint: 'Eclairs, pluie et gros bruit, les chiens se cachent sous le lit' },
+    { word: 'selfie',  diff: 'easy', hint: 'Photo de toi par toi-meme, le bras tendu ou avec un baton' },
 
-    // --- Nourriture ---
-    { word: 'chocolat',   hint: 'Noir, au lait ou blanc, c\'est le meilleur remede a la tristesse' },
-    { word: 'croissant',  hint: 'Viennoiserie doree en forme de lune, star du petit-dejeuner francais' },
-    { word: 'spaghetti',  hint: 'Pates longues et fines, impossibles a manger proprement' },
-    { word: 'ananas',     hint: 'Fruit tropical avec une couronne, debat eternel : sur la pizza ou pas ?' },
-    { word: 'fromage',    hint: 'La France en a plus de 400 sortes, ca sent fort mais c\'est bon' },
-    { word: 'omelette',   hint: 'Des oeufs battus dans la poele, simple mais delicieux' },
-    { word: 'banane',     hint: 'Fruit jaune courbe, snack prefere des singes et des sportifs' },
-    { word: 'baguette',   hint: 'Pain long et croustillant, symbole de la France dans le monde' },
+    // === MOYEN (6-8 lettres) ===
+    { word: 'girafe',    diff: 'medium', hint: 'L\'animal au plus long cou, elle voit tout de la-haut' },
+    { word: 'banane',    diff: 'medium', hint: 'Fruit jaune courbe, snack prefere des singes et des sportifs' },
+    { word: 'zombie',    diff: 'medium', hint: 'Mort-vivant qui marche lentement et veut manger ton cerveau' },
+    { word: 'volcan',    diff: 'medium', hint: 'Montagne en colere qui crache du feu et de la lave' },
+    { word: 'miroir',    diff: 'medium', hint: 'Il te montre la verite chaque matin, que tu le veuilles ou non' },
+    { word: 'valise',    diff: 'medium', hint: 'Tu la remplis pour les vacances, toujours trop petite' },
+    { word: 'tresor',    diff: 'medium', hint: 'Coffre rempli d\'or cache par les pirates, X marque l\'endroit' },
+    { word: 'guitare',   diff: 'medium', hint: 'Instrument a 6 cordes, tout le monde veut en jouer autour du feu' },
+    { word: 'vampire',   diff: 'medium', hint: 'Il dort le jour, sort la nuit et deteste l\'ail et les miroirs' },
+    { word: 'hamster',   diff: 'medium', hint: 'Petite boule de poils qui court dans sa roue toute la nuit' },
+    { word: 'fantome',   diff: 'medium', hint: 'Drap blanc qui fait "Bouh !" dans les couloirs la nuit' },
+    { word: 'licorne',   diff: 'medium', hint: 'Cheval magique avec une corne, elles petent des arcs-en-ciel' },
+    { word: 'fromage',   diff: 'medium', hint: 'La France en a plus de 400 sortes, ca sent fort mais c\'est bon' },
+    { word: 'tornade',   diff: 'medium', hint: 'Vent qui tourne tres vite en entonnoir, pas sympa du tout' },
+    { word: 'karate',    diff: 'medium', hint: 'Art martial japonais, on casse des planches et on crie beaucoup' },
+    { word: 'dominos',   diff: 'medium', hint: 'Petites pieces qu\'on aligne pour les faire toutes tomber' },
+    { word: 'chocolat',  diff: 'medium', hint: 'Noir, au lait ou blanc, meilleur remede a la tristesse' },
+    { word: 'football',  diff: 'medium', hint: 'Le sport ou 22 personnes courent apres un ballon pendant 90 min' },
+    { word: 'escalier',  diff: 'medium', hint: 'Tu le prends quand l\'ascenseur est en panne, ca fait les jambes' },
+    { word: 'batterie',  diff: 'medium', hint: 'Toujours a 1% quand tu en as le plus besoin' },
+    { word: 'internet',  diff: 'medium', hint: 'Le truc magique pour regarder des videos de chats a 3h du mat' },
+    { word: 'souris',    diff: 'medium', hint: 'Tu la bouges sur le bureau mais elle ne mange pas de fromage' },
+    { word: 'baguette',  diff: 'medium', hint: 'Pain long et croustillant, symbole de la France dans le monde' },
 
-    // --- Vie quotidienne ---
-    { word: 'parapluie',  hint: 'On l\'oublie toujours quand il pleut et on le perd quand il fait beau' },
-    { word: 'reveil',     hint: 'L\'objet le plus deteste le lundi matin, il sonne trop tot' },
-    { word: 'chaussette', hint: 'Toujours par deux mais il en manque toujours une apres la lessive' },
-    { word: 'escalier',   hint: 'Tu le prends quand l\'ascenseur est en panne, ca fait les jambes' },
-    { word: 'lunettes',   hint: 'Elles t\'aident a voir clair, mais tu les cherches alors qu\'elles sont sur ta tete' },
-    { word: 'sandwich',   hint: 'Repas express entre deux tranches de pain, sauveur de la pause dejeuner' },
-    { word: 'valise',     hint: 'Tu la remplis avant de partir en vacances, toujours trop petite' },
-    { word: 'miroir',     hint: 'Il te montre la verite chaque matin, que tu le veuilles ou non' },
-
-    // --- Nature ---
-    { word: 'volcan',     hint: 'Montagne en colere qui crache du feu et de la lave' },
-    { word: 'tonnerre',   hint: 'Le gros bruit apres l\'eclair, fait peur aux chiens' },
-    { word: 'avalanche',   hint: 'Enorme masse de neige qui devale la montagne a toute vitesse' },
-    { word: 'cascade',    hint: 'Chute d\'eau naturelle, comme une douche geante en foret' },
-    { word: 'iceberg',    hint: 'Bloc de glace flottant, 90% est cache sous l\'eau, comme tes talents' },
-    { word: 'aurore',     hint: 'Lumieres magiques dans le ciel du nord, vert et violet' },
-    { word: 'tornade',    hint: 'Vent qui tourne tres tres vite en forme d\'entonnoir, pas sympa du tout' },
-    { word: 'oasis',      hint: 'Petit coin de paradis avec eau et palmiers en plein desert' },
-
-    // --- Sport & loisirs ---
-    { word: 'football',   hint: 'Le sport ou 22 personnes courent apres un ballon pendant 90 minutes' },
-    { word: 'toboggan',   hint: 'Tu montes par l\'echelle et tu redescends en glissant, toujours fun' },
-    { word: 'karate',     hint: 'Art martial japonais, on casse des planches et on crie beaucoup' },
-    { word: 'trampoline', hint: 'Tu sautes dessus et tu touches presque le ciel, attention a l\'atterrissage' },
-    { word: 'guitare',    hint: 'Instrument a 6 cordes, tout le monde veut en jouer autour du feu' },
-    { word: 'dominos',    hint: 'Petites pieces qu\'on aligne pour les faire toutes tomber, satisfaisant !' },
-
-    // --- Ecole & culture ---
-    { word: 'dictionnaire', hint: 'Le livre qui connait tous les mots, il a reponse a tout' },
-    { word: 'tableau',    hint: 'Surface verte ou blanche ou le prof ecrit des trucs importants' },
-    { word: 'pyramide',   hint: 'Construction triangulaire en Egypte, les pharaons dormaient dedans' },
-    { word: 'dinosaure',  hint: 'Gros lezard disparu il y a 65 millions d\'annees, le T-Rex etait le boss' },
-    { word: 'astronaute', hint: 'Metier de reve : voyager dans l\'espace et flotter en apesanteur' },
-    { word: 'telescope',  hint: 'Tube magique pour voir les etoiles et les planetes de tres loin' },
-    { word: 'squelette',  hint: 'Tu en as un a l\'interieur de toi en ce moment, 206 os en tout' },
-    { word: 'tresor',     hint: 'Coffre rempli d\'or cache par les pirates, X marque l\'endroit' },
-
-    // --- Fun & absurde ---
-    { word: 'moustache',  hint: 'Poils au-dessus de la levre, style Mario Bros ou Salvador Dali' },
-    { word: 'sorciere',   hint: 'Vole sur un balai, a un chat noir et prepare des potions bizarres' },
-    { word: 'fantome',    hint: 'Drap blanc qui fait "Bouh !" dans les couloirs la nuit' },
-    { word: 'licorne',    hint: 'Cheval magique avec une corne, elles petent des arcs-en-ciel' },
-    { word: 'zombie',     hint: 'Mort-vivant qui marche lentement et veut manger ton cerveau' },
-    { word: 'vampire',    hint: 'Il dort le jour, sort la nuit et deteste l\'ail et les miroirs' },
-    { word: 'robot',      hint: 'Machine qui pourrait te remplacer au travail, bip boup bip' },
-    { word: 'ninja',      hint: 'Guerrier silencieux tout en noir, tu ne le vois jamais venir' },
-
-    // --- Informatique (quelques uns gardes) ---
-    { word: 'internet',   hint: 'Le truc magique qui te permet de regarder des videos de chats a 3h du mat' },
-    { word: 'ordinateur', hint: 'Machine qui fait tout : travail, jeux, films, et qui plante au pire moment' },
-    { word: 'clavier',    hint: 'Les boutons sur lesquels tu tapes, certains les maltraitent en jouant' },
-    { word: 'souris',     hint: 'Tu la bouges sur le bureau mais elle ne mange pas de fromage' },
-    { word: 'wifi',       hint: 'Quand il disparait, c\'est la panique a la maison' },
-    { word: 'batterie',   hint: 'Toujours a 1% quand tu en as le plus besoin' },
-    { word: 'selfie',     hint: 'Photo de toi par toi-meme, le bras tendu ou avec un baton' },
-    { word: 'emoji',      hint: 'Petite image jaune qui rit, pleure ou fait un clin d\'oeil dans tes messages' }
+    // === DIFFICILE (9+ lettres) ===
+    { word: 'crocodile',    diff: 'hard', hint: 'Reptile qui sourit tout le temps mais vaut mieux pas s\'approcher' },
+    { word: 'papillon',     diff: 'hard', hint: 'Avant il rampait, maintenant il vole avec des ailes colorees' },
+    { word: 'parapluie',    diff: 'hard', hint: 'On l\'oublie quand il pleut et on le perd quand il fait beau' },
+    { word: 'chaussette',   diff: 'hard', hint: 'Toujours par deux mais il en manque une apres la lessive' },
+    { word: 'spaghetti',    diff: 'hard', hint: 'Pates longues et fines, impossibles a manger proprement' },
+    { word: 'trampoline',   diff: 'hard', hint: 'Tu sautes dessus et tu touches presque le ciel' },
+    { word: 'moustache',    diff: 'hard', hint: 'Poils au-dessus de la levre, style Mario Bros ou Dali' },
+    { word: 'dinosaure',    diff: 'hard', hint: 'Gros lezard disparu il y a 65 millions d\'annees' },
+    { word: 'astronaute',   diff: 'hard', hint: 'Metier de reve : voyager dans l\'espace en apesanteur' },
+    { word: 'squelette',    diff: 'hard', hint: 'Tu en as un a l\'interieur de toi, 206 os en tout' },
+    { word: 'dictionnaire', diff: 'hard', hint: 'Le livre qui connait tous les mots, il a reponse a tout' },
+    { word: 'croissant',    diff: 'hard', hint: 'Viennoiserie doree en forme de lune, star du petit-dej' },
+    { word: 'ordinateur',   diff: 'hard', hint: 'Machine qui fait tout et qui plante toujours au pire moment' },
+    { word: 'toboggan',     diff: 'hard', hint: 'Tu montes par l\'echelle et tu redescends en glissant' },
+    { word: 'telescope',    diff: 'hard', hint: 'Tube magique pour voir les etoiles et les planetes de loin' },
+    { word: 'avalanche',    diff: 'hard', hint: 'Enorme masse de neige qui devale la montagne a fond' },
+    { word: 'pyramide',     diff: 'hard', hint: 'Construction triangulaire en Egypte, les pharaons y dormaient' },
+    { word: 'sorciere',     diff: 'hard', hint: 'Vole sur un balai, a un chat noir et prepare des potions' },
+    { word: 'cameleon',     diff: 'hard', hint: 'Le roi du deguisement, il change de couleur comme de chemise' },
+    { word: 'lunettes',     diff: 'hard', hint: 'T\'aident a voir clair mais tu les cherches sur ta tete' }
   ];
 
   const ALPHABET = 'abcdefghijklmnopqrstuvwxyz';
@@ -431,9 +443,10 @@ const PenduGame = (() => {
   let errors = 0;
   let gameOver = false;
 
-  /** Choisit un mot aleatoire. */
+  /** Choisit un mot aleatoire selon la difficulte. */
   function pickWord() {
-    currentEntry = WORDS[Math.floor(Math.random() * WORDS.length)];
+    const pool = WORDS.filter(w => w.diff === currentLevel);
+    currentEntry = pool[Math.floor(Math.random() * pool.length)];
     return currentEntry.word;
   }
 
@@ -482,15 +495,16 @@ const PenduGame = (() => {
     errorsEl.classList.add('bump');
   }
 
-  /** Revele une partie du corps. */
+  /** Revele une partie du corps selon le niveau. */
   function showBodyPart(index) {
-    const part = document.getElementById(BODY_PARTS[index]);
+    const parts = PARTS_BY_LEVEL[currentLevel];
+    const part = document.getElementById(parts[index]);
     if (part) part.classList.add('visible');
   }
 
   /** Cache toutes les parties du corps. */
   function hideAllParts() {
-    BODY_PARTS.forEach(id => {
+    ALL_BODY_PARTS.forEach(id => {
       const part = document.getElementById(id);
       if (part) part.classList.remove('visible');
     });
@@ -581,7 +595,7 @@ const PenduGame = (() => {
       showBodyPart(errors);
       errors++;
       updateErrors();
-      if (errors >= MAX_ERRORS) {
+      if (errors >= maxErrors) {
         triggerDefeat();
       }
     }
@@ -602,6 +616,18 @@ const PenduGame = (() => {
     renderHint();
     renderWord();
     renderKeyboard();
+
+    // Mode difficile : cacher l'indice
+    if (currentLevel === 'hard') {
+      hintContainer.classList.add('pendu__hint--hidden');
+      const revealHint = () => {
+        hintContainer.classList.remove('pendu__hint--hidden');
+        hintContainer.removeEventListener('click', revealHint);
+      };
+      hintContainer.addEventListener('click', revealHint);
+    } else {
+      hintContainer.classList.remove('pendu__hint--hidden');
+    }
   }
 
   /** Gestion du clavier physique. */
@@ -617,42 +643,77 @@ const PenduGame = (() => {
     }
   }
 
-  /** Lance la partie apres saisie du prenom. */
-  function startGame() {
+  /** Etape 1 : Valide le prenom et passe au choix de difficulte. */
+  function goToDifficulty() {
     const name = nameInput.value.trim();
     if (!name) {
       nameInput.focus();
       return;
     }
 
-    // Stocker le prenom (premiere lettre majuscule)
     playerName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-    playerNameEl.textContent = `🎮 ${playerName}`;
 
-    // Sauvegarder dans la liste des joueurs (localStorage)
+    // Sauvegarder dans la liste des joueurs
     AdminPanel.savePlayer(playerName);
 
-    // Basculer de l'intro vers le jeu
+    // Afficher le nom dans l'ecran de difficulte
+    diffNameEl.textContent = `🎮 ${playerName}`;
+
+    // Basculer intro → difficulte
     introScreen.classList.add('hidden');
+    diffScreen.classList.remove('hidden');
+  }
+
+  /**
+   * Etape 2 : Lance la partie avec le niveau choisi.
+   * @param {string} level — 'easy' | 'medium' | 'hard'
+   */
+  function startGame(level) {
+    currentLevel = level;
+    const cfg = LEVELS[level];
+    maxErrors = cfg.maxErrors;
+
+    // Mettre a jour l'interface
+    playerNameEl.textContent = `🎮 ${playerName}`;
+    levelBadge.textContent = `${cfg.emoji} ${cfg.label}`;
+    levelBadge.className = `pendu__level-badge pendu__level-badge--${cfg.css}`;
+    maxLabel.textContent = `/ ${maxErrors}`;
+
+    // Basculer difficulte → jeu
+    diffScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
 
     reset();
   }
 
-  /** Revient a l'ecran d'intro (quand on retourne au menu puis revient). */
+  /** Revient a l'ecran de difficulte (pour changer de niveau). */
+  function showDifficulty() {
+    diffScreen.classList.remove('hidden');
+    gameScreen.classList.add('hidden');
+    introScreen.classList.add('hidden');
+    diffNameEl.textContent = `🎮 ${playerName}`;
+  }
+
+  /** Revient a l'ecran d'intro (premier lancement). */
   function showIntro() {
     introScreen.classList.remove('hidden');
+    diffScreen.classList.add('hidden');
     gameScreen.classList.add('hidden');
-    nameInput.value = playerName; // pre-remplir si deja saisi
+    nameInput.value = playerName;
     setTimeout(() => nameInput.focus(), 350);
   }
 
   /** Initialise le jeu. */
   function init() {
     // Ecouteurs intro
-    startBtn.addEventListener('click', startGame);
+    startBtn.addEventListener('click', goToDifficulty);
     nameInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') startGame();
+      if (e.key === 'Enter') goToDifficulty();
+    });
+
+    // Ecouteurs difficulte
+    document.querySelectorAll('[data-level]').forEach(btn => {
+      btn.addEventListener('click', () => startGame(btn.dataset.level));
     });
 
     // Ecouteurs jeu
@@ -668,15 +729,20 @@ const PenduGame = (() => {
 
   /** Appele quand on entre dans l'ecran. */
   function onEnter() {
-    // Si pas de prenom, montrer l'intro
+    // Pas de prenom → intro
     if (!playerName) {
       showIntro();
       return;
     }
-    // Sinon reprendre ou reset
+    // Partie finie → choix de difficulte pour rejouer
+    if (gameOver) {
+      showDifficulty();
+      return;
+    }
+    // Partie en cours → reprendre
     introScreen.classList.add('hidden');
+    diffScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
-    if (gameOver) reset();
   }
 
   return { init, onEnter };
