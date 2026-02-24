@@ -616,6 +616,49 @@ const PenduGame = (() => {
     setTimeout(() => { confettiContainer.innerHTML = ''; }, 3500);
   }
 
+  /** Lance les pieces d'or qui volent vers le compteur. */
+  function launchGoldCoins(reward) {
+    // Position de depart : centre de la carte
+    const cardRect = card.getBoundingClientRect();
+    const startX = cardRect.left + cardRect.width / 2;
+    const startY = cardRect.top + cardRect.height / 2;
+
+    // Position cible : le compteur d'or dans la topbar
+    const goldMini = document.querySelector('.pendu__gold-mini');
+    const targetRect = goldMini.getBoundingClientRect();
+    const targetX = targetRect.left + targetRect.width / 2;
+    const targetY = targetRect.top + targetRect.height / 2;
+
+    const coinCount = Math.min(reward, 15);
+
+    for (let i = 0; i < coinCount; i++) {
+      const coin = document.createElement('div');
+      coin.classList.add('gold-coin');
+      coin.textContent = '🪙';
+
+      // Depart avec un spread aleatoire
+      const spreadX = (Math.random() - 0.5) * 120;
+      const spreadY = (Math.random() - 0.5) * 80;
+      coin.style.left = `${startX + spreadX}px`;
+      coin.style.top = `${startY + spreadY}px`;
+
+      // Variables CSS pour la destination
+      coin.style.setProperty('--target-x', `${targetX - startX - spreadX}px`);
+      coin.style.setProperty('--target-y', `${targetY - startY - spreadY}px`);
+
+      coin.style.animationDelay = `${i * 0.07}s`;
+      confettiContainer.appendChild(coin);
+    }
+
+    // Texte flottant "+X 🪙"
+    const floatText = document.createElement('div');
+    floatText.classList.add('gold-float-text');
+    floatText.textContent = `+${reward} 🪙`;
+    floatText.style.left = `${startX}px`;
+    floatText.style.top = `${startY - 30}px`;
+    confettiContainer.appendChild(floatText);
+  }
+
   /** Fin de partie. */
   function endGame() {
     gameOver = true;
@@ -648,6 +691,7 @@ const PenduGame = (() => {
     setRestartLabel(true);
     card.classList.add('victory');
     launchConfetti();
+    launchGoldCoins(reward);
   }
 
   /** Defaite. */
