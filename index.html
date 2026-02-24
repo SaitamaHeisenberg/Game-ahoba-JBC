@@ -102,8 +102,56 @@
         </article>
 
       </div>
+
+      <!-- Bouton admin discret -->
+      <button class="admin-trigger" id="admin-trigger" title="Administration">🔒</button>
+
     </div>
   </section>
+
+  <!-- ============================================
+       PANNEAU ADMIN (overlay)
+       ============================================ -->
+  <div class="admin-overlay hidden" id="admin-overlay">
+    <div class="admin-panel">
+
+      <!-- Ecran de code -->
+      <div class="admin__auth" id="admin-auth">
+        <button class="admin__close" id="admin-close">&times;</button>
+        <span class="admin__lock-icon">🔐</span>
+        <h3 class="admin__title">Acc&egrave;s administrateur</h3>
+        <p class="admin__desc">Entrez le code d'acc&egrave;s</p>
+        <div class="input-group">
+          <input
+            type="password"
+            id="admin-code-input"
+            class="input-group__field"
+            placeholder="Code secret..."
+            autocomplete="off"
+          >
+          <button id="admin-code-btn" class="btn btn--primary">
+            <span class="btn__text">Valider</span>
+          </button>
+        </div>
+        <div id="admin-code-msg" class="message" aria-live="polite"></div>
+      </div>
+
+      <!-- Liste des joueurs (cachee par defaut) -->
+      <div class="admin__dashboard hidden" id="admin-dashboard">
+        <button class="admin__close" id="admin-close-dash">&times;</button>
+        <h3 class="admin__title">📋 Joueurs du Pendu</h3>
+        <p class="admin__subtitle" id="admin-count"></p>
+        <div class="admin__list-wrapper">
+          <ul class="admin__list" id="admin-player-list"></ul>
+        </div>
+        <button id="admin-clear-btn" class="btn btn--ghost admin__clear-btn">
+          <span class="btn__text">Effacer tout</span>
+          <span class="btn__icon">🗑</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
 
   <!-- ============================================
        ECRAN : JEU — DEVINE LE NOMBRE

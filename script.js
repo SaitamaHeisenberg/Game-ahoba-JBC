@@ -592,6 +592,9 @@ const PenduGame = (() => {
     playerName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
     playerNameEl.textContent = `🎮 ${playerName}`;
 
+    // Sauvegarder dans la liste des joueurs (localStorage)
+    AdminPanel.savePlayer(playerName);
+
     // Basculer de l'intro vers le jeu
     introScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
@@ -644,6 +647,154 @@ const PenduGame = (() => {
 
 
 // ============================================
+// MODULE 5 : PANNEAU ADMIN
+// ============================================
+
+const AdminPanel = (() => {
+  const SECRET_CODE = '259983@@';
+  const STORAGE_KEY = 'lynasoft_pendu_players';
+
+  // Elements du DOM
+  const trigger = document.getElementById('admin-trigger');
+  const overlay = document.getElementById('admin-overlay');
+  const authScreen = document.getElementById('admin-auth');
+  const dashboard = document.getElementById('admin-dashboard');
+  const codeInput = document.getElementById('admin-code-input');
+  const codeBtn = document.getElementById('admin-code-btn');
+  const codeMsgEl = document.getElementById('admin-code-msg');
+  const closeBtn = document.getElementById('admin-close');
+  const closeDashBtn = document.getElementById('admin-close-dash');
+  const playerList = document.getElementById('admin-player-list');
+  const countEl = document.getElementById('admin-count');
+  const clearBtn = document.getElementById('admin-clear-btn');
+
+  /**
+   * Sauvegarde un joueur dans localStorage.
+   * @param {string} name — prenom du joueur
+   */
+  function savePlayer(name) {
+    const players = getPlayers();
+    players.push({
+      name,
+      date: new Date().toISOString()
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+  }
+
+  /**
+   * Recupere la liste des joueurs.
+   * @returns {Array<{name: string, date: string}>}
+   */
+  function getPlayers() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch {
+      return [];
+    }
+  }
+
+  /** Efface tous les joueurs. */
+  function clearPlayers() {
+    localStorage.removeItem(STORAGE_KEY);
+    renderPlayerList();
+  }
+
+  /** Affiche un message dans l'ecran auth. */
+  function showCodeMsg(text, type) {
+    codeMsgEl.className = 'message';
+    void codeMsgEl.offsetWidth;
+    codeMsgEl.textContent = text;
+    codeMsgEl.classList.add('visible', `message--${type}`, 'pop');
+  }
+
+  /** Ouvre le panneau admin. */
+  function open() {
+    // Toujours montrer l'ecran auth d'abord
+    authScreen.classList.remove('hidden');
+    dashboard.classList.add('hidden');
+    codeInput.value = '';
+    codeMsgEl.className = 'message';
+    overlay.classList.remove('hidden');
+    setTimeout(() => codeInput.focus(), 100);
+  }
+
+  /** Ferme le panneau admin. */
+  function close() {
+    overlay.classList.add('hidden');
+  }
+
+  /** Verifie le code entre. */
+  function validateCode() {
+    const code = codeInput.value;
+    if (code === SECRET_CODE) {
+      authScreen.classList.add('hidden');
+      dashboard.classList.remove('hidden');
+      renderPlayerList();
+    } else {
+      showCodeMsg('Code incorrect', 'error');
+      codeInput.value = '';
+      codeInput.focus();
+    }
+  }
+
+  /** Formate une date ISO en format lisible. */
+  function formatDate(iso) {
+    const d = new Date(iso);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    const hours = String(d.getHours()).padStart(2, '0');
+    const mins = String(d.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${mins}`;
+  }
+
+  /** Affiche la liste des joueurs. */
+  function renderPlayerList() {
+    const players = getPlayers();
+    countEl.textContent = `${players.length} partie${players.length > 1 ? 's' : ''} enregistr\u00e9e${players.length > 1 ? 's' : ''}`;
+
+    if (players.length === 0) {
+      playerList.innerHTML = '<li class="admin__empty">Aucun joueur pour le moment</li>';
+      return;
+    }
+
+    // Afficher du plus recent au plus ancien
+    const reversed = [...players].reverse();
+    playerList.innerHTML = reversed.map((p, i) => `
+      <li class="admin__list-item">
+        <div class="admin__player-info">
+          <span class="admin__player-rank">#${players.length - i}</span>
+          <span class="admin__player-name">${p.name}</span>
+        </div>
+        <span class="admin__player-date">${formatDate(p.date)}</span>
+      </li>
+    `).join('');
+  }
+
+  /** Initialise les ecouteurs. */
+  function init() {
+    trigger.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    closeDashBtn.addEventListener('click', close);
+    codeBtn.addEventListener('click', validateCode);
+    codeInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') validateCode();
+    });
+    clearBtn.addEventListener('click', () => {
+      clearPlayers();
+    });
+
+    // Fermer en cliquant sur le fond
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) close();
+    });
+  }
+
+  return { init, savePlayer };
+})();
+
+
+// ============================================
 // INITIALISATION GLOBALE
 // ============================================
 
@@ -657,4 +808,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   PenduGame.init();
   GameRegistry.register('pendu', PenduGame);
+
+  // Initialiser le panneau admin
+  AdminPanel.init();
 });
