@@ -67,14 +67,15 @@
           </button>
         </article>
 
-        <!-- Le Pendu — BIENTOT -->
-        <article class="game-card game-card--locked" data-color="red">
-          <div class="game-card__badge game-card__badge--soon">Bient&ocirc;t</div>
+        <!-- Le Pendu — DISPONIBLE -->
+        <article class="game-card" data-game="pendu" data-color="red">
+          <div class="game-card__badge game-card__badge--available">Disponible</div>
           <div class="game-card__icon">💀</div>
           <h2 class="game-card__name">Le Pendu</h2>
-          <p class="game-card__desc">Devine le mot lettre par lettre</p>
-          <button class="btn btn--locked" disabled>
-            <span class="btn__text">Bient&ocirc;t disponible</span>
+          <p class="game-card__desc">Devine le mot lettre par lettre en 6 erreurs max</p>
+          <button class="btn btn--play btn--play-red" data-navigate="pendu">
+            <span class="btn__text">Jouer</span>
+            <span class="btn__icon">→</span>
           </button>
         </article>
 
@@ -156,6 +157,76 @@
 
           <!-- Bouton recommencer -->
           <button id="restart-btn" class="btn btn--ghost hidden">
+            <span class="btn__text">Recommencer</span>
+            <span class="btn__icon">↻</span>
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================
+       ECRAN : JEU — LE PENDU
+       ============================================ -->
+  <section id="screen-pendu" class="screen" data-accent="red">
+    <div class="game-view">
+
+      <!-- Barre du haut -->
+      <nav class="game-topbar">
+        <button class="btn btn--back" data-navigate="menu">
+          <span class="btn__icon">←</span>
+          <span class="btn__text">Menu</span>
+        </button>
+        <h2 class="game-topbar__title">💀 Le Pendu</h2>
+        <div class="game-topbar__spacer"></div>
+      </nav>
+
+      <!-- Contenu du jeu -->
+      <div class="game-content">
+        <div class="card" id="pendu-card">
+
+          <div class="card__header">
+            <p class="card__subtitle">Devine le mot cach&eacute; avant <strong>6 erreurs</strong></p>
+          </div>
+
+          <!-- Dessin du pendu (SVG) -->
+          <div class="pendu__drawing" id="pendu-drawing">
+            <svg viewBox="0 0 200 200" class="pendu__svg">
+              <!-- Potence -->
+              <line x1="20" y1="190" x2="80" y2="190" class="pendu__base" />
+              <line x1="50" y1="190" x2="50" y2="20" class="pendu__pole" />
+              <line x1="50" y1="20" x2="130" y2="20" class="pendu__top" />
+              <line x1="130" y1="20" x2="130" y2="45" class="pendu__rope" />
+              <!-- Corps (cache par defaut, revele par JS) -->
+              <circle cx="130" cy="60" r="15" class="pendu__part" id="pendu-head" />
+              <line x1="130" y1="75" x2="130" y2="120" class="pendu__part" id="pendu-body" />
+              <line x1="130" y1="90" x2="105" y2="110" class="pendu__part" id="pendu-left-arm" />
+              <line x1="130" y1="90" x2="155" y2="110" class="pendu__part" id="pendu-right-arm" />
+              <line x1="130" y1="120" x2="110" y2="155" class="pendu__part" id="pendu-left-leg" />
+              <line x1="130" y1="120" x2="150" y2="155" class="pendu__part" id="pendu-right-leg" />
+            </svg>
+          </div>
+
+          <!-- Mot a deviner -->
+          <div class="pendu__word" id="pendu-word"></div>
+
+          <!-- Compteur d'erreurs -->
+          <div class="attempts">
+            <span class="attempts__label">Erreurs</span>
+            <span class="attempts__count" id="pendu-errors">0</span>
+            <span class="attempts__label">/ 6</span>
+          </div>
+
+          <!-- Clavier virtuel -->
+          <div class="pendu__keyboard" id="pendu-keyboard"></div>
+
+          <!-- Message -->
+          <div id="pendu-message" class="message" aria-live="polite"></div>
+
+          <!-- Bouton recommencer -->
+          <button id="pendu-restart" class="btn btn--ghost hidden">
             <span class="btn__text">Recommencer</span>
             <span class="btn__icon">↻</span>
           </button>

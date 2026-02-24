@@ -761,6 +761,166 @@ body::before {
 }
 
 /* ============================================
+   LE PENDU — Composants specifiques
+   ============================================ */
+
+/* Bouton Jouer rouge pour le Pendu */
+.btn--play-red {
+  background: var(--color-red);
+  box-shadow: 0 2px 12px rgba(255, 107, 107, 0.3);
+}
+
+.btn--play-red:hover {
+  box-shadow: 0 4px 20px rgba(255, 107, 107, 0.45);
+}
+
+/* Dessin SVG du pendu */
+.pendu__drawing {
+  width: 160px;
+  height: 160px;
+}
+
+.pendu__svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Potence */
+.pendu__base,
+.pendu__pole,
+.pendu__top,
+.pendu__rope {
+  stroke: var(--text-muted);
+  stroke-width: 3;
+  stroke-linecap: round;
+  fill: none;
+}
+
+/* Parties du corps (cachees par defaut) */
+.pendu__part {
+  stroke: var(--color-error);
+  stroke-width: 3;
+  stroke-linecap: round;
+  fill: none;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.pendu__part.visible {
+  opacity: 1;
+  animation: partAppear 0.4s var(--ease-out);
+}
+
+@keyframes partAppear {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Mot a deviner */
+.pendu__word {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+}
+
+.pendu__letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.6rem;
+  border-bottom: 2.5px solid var(--bg-card-border);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  transition: border-color var(--t-fast), color var(--t-fast);
+}
+
+.pendu__letter.revealed {
+  border-color: var(--accent);
+  animation: letterReveal 0.35s var(--ease-out);
+}
+
+.pendu__letter.revealed-end {
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+@keyframes letterReveal {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* Clavier virtuel */
+.pendu__keyboard {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  width: 100%;
+  max-width: 380px;
+}
+
+.pendu__key {
+  width: 2.2rem;
+  height: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--bg-card-border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease-smooth);
+}
+
+.pendu__key:hover {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+.pendu__key:active {
+  transform: scale(0.92);
+}
+
+.pendu__key--correct {
+  background: var(--color-success-bg);
+  border-color: rgba(81, 207, 102, 0.3);
+  color: var(--color-success);
+  cursor: default;
+  opacity: 0.7;
+}
+
+.pendu__key--correct:hover {
+  transform: none;
+  background: var(--color-success-bg);
+  border-color: rgba(81, 207, 102, 0.3);
+}
+
+.pendu__key--wrong {
+  background: var(--color-error-bg);
+  border-color: rgba(255, 107, 107, 0.2);
+  color: var(--color-error);
+  cursor: default;
+  opacity: 0.4;
+}
+
+.pendu__key--wrong:hover {
+  transform: none;
+  background: var(--color-error-bg);
+  border-color: rgba(255, 107, 107, 0.2);
+}
+
+/* ============================================
    CONFETTIS
    ============================================ */
 .confetti-container {
