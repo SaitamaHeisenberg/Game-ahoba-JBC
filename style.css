@@ -844,6 +844,55 @@ body::before {
   to   { opacity: 1; transform: scale(1); }
 }
 
+/* Barre d'or */
+.pendu__gold-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 152, 0, 0.08));
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1.2rem;
+  width: 100%;
+}
+
+.pendu__gold-icon {
+  font-size: 1.3rem;
+}
+
+.pendu__gold-amount {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffc107;
+  min-width: 2ch;
+  text-align: center;
+}
+
+.pendu__gold-amount.bump {
+  animation: bump 0.4s ease;
+}
+
+.pendu__gold-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Mini compteur d'or dans la topbar */
+.pendu__gold-mini {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffc107;
+  background: rgba(255, 193, 7, 0.08);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  border-radius: 20px;
+  padding: 0.3rem 0.75rem;
+  white-space: nowrap;
+}
+
 /* Boutons de difficulte */
 .pendu__levels {
   display: flex;
@@ -913,6 +962,44 @@ body::before {
   margin-top: 0.15rem;
 }
 
+/* Info wrapper pour le niveau */
+.pendu__level-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Texte de recompense / verrouillage */
+.pendu__level-lock {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  color: #ffc107;
+}
+
+/* Bouton de niveau verrouille */
+.pendu__level-btn--locked {
+  opacity: 0.4;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.pendu__level-btn--locked:hover {
+  transform: none;
+  box-shadow: none;
+  background: var(--bg-input);
+  border-color: var(--bg-card-border);
+}
+
+.pendu__level-btn--locked:active {
+  transform: none;
+}
+
+.pendu__level-btn--locked .pendu__level-lock {
+  color: var(--text-muted);
+}
+
 /* Badge de difficulte dans le jeu */
 .pendu__level-badge {
   display: inline-block;
@@ -941,33 +1028,6 @@ body::before {
   background: rgba(255, 107, 107, 0.1);
   color: var(--color-error);
   border: 1px solid rgba(255, 107, 107, 0.2);
-}
-
-/* Indice cache (mode difficile) */
-.pendu__hint--hidden {
-  filter: blur(6px);
-  user-select: none;
-  cursor: pointer;
-  transition: filter var(--t-smooth);
-  position: relative;
-}
-
-.pendu__hint--hidden:hover {
-  filter: blur(3px);
-}
-
-.pendu__hint--hidden::after {
-  content: 'Cliquer pour reveler';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
-  filter: blur(0);
 }
 
 /* Indice */

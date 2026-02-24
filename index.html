@@ -228,7 +228,7 @@
           <span class="btn__text">Menu</span>
         </button>
         <h2 class="game-topbar__title">💀 Le Pendu</h2>
-        <div class="game-topbar__spacer"></div>
+        <div class="pendu__gold-mini">🪙 <span class="pendu__gold-amount">0</span></div>
       </nav>
 
       <!-- Etape 1 : Saisie du prenom -->
@@ -261,23 +261,40 @@
         <div class="card">
           <div class="card__header">
             <p class="pendu__player-name" id="pendu-diff-name"></p>
-            <p class="card__subtitle">Choisis ton niveau de difficult&eacute;</p>
+            <p class="card__subtitle">Choisis ton niveau</p>
           </div>
+
+          <!-- Compteur d'or -->
+          <div class="pendu__gold-bar">
+            <span class="pendu__gold-icon">🪙</span>
+            <span class="pendu__gold-amount" id="pendu-gold">0</span>
+            <span class="pendu__gold-label">pi&egrave;ces d'or</span>
+          </div>
+
           <div class="pendu__levels">
             <button class="pendu__level-btn pendu__level-btn--easy" data-level="easy">
               <span class="pendu__level-icon">😎</span>
-              <span class="pendu__level-name">Facile</span>
-              <span class="pendu__level-desc">8 erreurs &bull; Mots courts &bull; Indice visible</span>
+              <div class="pendu__level-info">
+                <span class="pendu__level-name">Facile</span>
+                <span class="pendu__level-desc">8 erreurs &bull; Mots courts &bull; Indice complet</span>
+                <span class="pendu__level-lock">+10 🪙 par victoire</span>
+              </div>
             </button>
             <button class="pendu__level-btn pendu__level-btn--medium" data-level="medium">
               <span class="pendu__level-icon">🤔</span>
-              <span class="pendu__level-name">Moyen</span>
-              <span class="pendu__level-desc">6 erreurs &bull; Mots moyens &bull; Indice visible</span>
+              <div class="pendu__level-info">
+                <span class="pendu__level-name">Moyen</span>
+                <span class="pendu__level-desc">6 erreurs &bull; Mots moyens &bull; Indice court</span>
+                <span class="pendu__level-lock">🔒 50 🪙 pour d&eacute;bloquer</span>
+              </div>
             </button>
             <button class="pendu__level-btn pendu__level-btn--hard" data-level="hard">
               <span class="pendu__level-icon">💀</span>
-              <span class="pendu__level-name">Difficile</span>
-              <span class="pendu__level-desc">4 erreurs &bull; Mots longs &bull; Indice cach&eacute;</span>
+              <div class="pendu__level-info">
+                <span class="pendu__level-name">Difficile</span>
+                <span class="pendu__level-desc">4 erreurs &bull; Mots longs &bull; Aucun indice</span>
+                <span class="pendu__level-lock">🔒 200 🪙 pour d&eacute;bloquer</span>
+              </div>
             </button>
           </div>
         </div>

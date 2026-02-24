@@ -336,13 +336,16 @@ const PenduGame = (() => {
 
   // Configuration des niveaux
   const LEVELS = {
-    easy:   { label: 'Facile',   emoji: '😎', maxErrors: 8, css: 'easy' },
-    medium: { label: 'Moyen',    emoji: '🤔', maxErrors: 6, css: 'medium' },
-    hard:   { label: 'Difficile', emoji: '💀', maxErrors: 4, css: 'hard' }
+    easy:   { label: 'Facile',    emoji: '😎', maxErrors: 8, css: 'easy',   reward: 10,  unlockCost: 0 },
+    medium: { label: 'Moyen',     emoji: '🤔', maxErrors: 6, css: 'medium', reward: 25,  unlockCost: 50 },
+    hard:   { label: 'Difficile', emoji: '💀', maxErrors: 4, css: 'hard',   reward: 50,  unlockCost: 200 }
   };
 
-  let currentLevel = 'medium';
-  let maxErrors = 6;
+  const GOLD_STORAGE_KEY = 'lynasoft_pendu_gold';
+
+  let currentLevel = 'easy';
+  let maxErrors = 8;
+  let gold = 0;
 
   // Toutes les parties du pendu (8 max pour le mode facile)
   const ALL_BODY_PARTS = [
@@ -361,9 +364,9 @@ const PenduGame = (() => {
              'pendu-left-arm', 'pendu-right-arm']
   };
 
-  // Banque de mots variee avec indices fun { word, hint, diff }
+  // Banque de mots : hint = indice long (facile), shortHint = indice court (moyen)
   const WORDS = [
-    // === FACILE (4-5 lettres) ===
+    // === FACILE (4-5 lettres) — indice long et genereux ===
     { word: 'chat',    diff: 'easy', hint: 'Petit felin domestique qui ronronne et dort 16h par jour' },
     { word: 'lune',    diff: 'easy', hint: 'Boule blanche dans le ciel la nuit, les loups lui parlent' },
     { word: 'robot',   diff: 'easy', hint: 'Machine qui pourrait te remplacer au travail, bip boup bip' },
@@ -383,58 +386,59 @@ const PenduGame = (() => {
     { word: 'orage',   diff: 'easy', hint: 'Eclairs, pluie et gros bruit, les chiens se cachent sous le lit' },
     { word: 'selfie',  diff: 'easy', hint: 'Photo de toi par toi-meme, le bras tendu ou avec un baton' },
 
-    // === MOYEN (6-8 lettres) ===
-    { word: 'girafe',    diff: 'medium', hint: 'L\'animal au plus long cou, elle voit tout de la-haut' },
-    { word: 'banane',    diff: 'medium', hint: 'Fruit jaune courbe, snack prefere des singes et des sportifs' },
-    { word: 'zombie',    diff: 'medium', hint: 'Mort-vivant qui marche lentement et veut manger ton cerveau' },
-    { word: 'volcan',    diff: 'medium', hint: 'Montagne en colere qui crache du feu et de la lave' },
-    { word: 'miroir',    diff: 'medium', hint: 'Il te montre la verite chaque matin, que tu le veuilles ou non' },
-    { word: 'valise',    diff: 'medium', hint: 'Tu la remplis pour les vacances, toujours trop petite' },
-    { word: 'tresor',    diff: 'medium', hint: 'Coffre rempli d\'or cache par les pirates, X marque l\'endroit' },
-    { word: 'guitare',   diff: 'medium', hint: 'Instrument a 6 cordes, tout le monde veut en jouer autour du feu' },
-    { word: 'vampire',   diff: 'medium', hint: 'Il dort le jour, sort la nuit et deteste l\'ail et les miroirs' },
-    { word: 'hamster',   diff: 'medium', hint: 'Petite boule de poils qui court dans sa roue toute la nuit' },
-    { word: 'fantome',   diff: 'medium', hint: 'Drap blanc qui fait "Bouh !" dans les couloirs la nuit' },
-    { word: 'licorne',   diff: 'medium', hint: 'Cheval magique avec une corne, elles petent des arcs-en-ciel' },
-    { word: 'fromage',   diff: 'medium', hint: 'La France en a plus de 400 sortes, ca sent fort mais c\'est bon' },
-    { word: 'tornade',   diff: 'medium', hint: 'Vent qui tourne tres vite en entonnoir, pas sympa du tout' },
-    { word: 'karate',    diff: 'medium', hint: 'Art martial japonais, on casse des planches et on crie beaucoup' },
-    { word: 'dominos',   diff: 'medium', hint: 'Petites pieces qu\'on aligne pour les faire toutes tomber' },
-    { word: 'chocolat',  diff: 'medium', hint: 'Noir, au lait ou blanc, meilleur remede a la tristesse' },
-    { word: 'football',  diff: 'medium', hint: 'Le sport ou 22 personnes courent apres un ballon pendant 90 min' },
-    { word: 'escalier',  diff: 'medium', hint: 'Tu le prends quand l\'ascenseur est en panne, ca fait les jambes' },
-    { word: 'batterie',  diff: 'medium', hint: 'Toujours a 1% quand tu en as le plus besoin' },
-    { word: 'internet',  diff: 'medium', hint: 'Le truc magique pour regarder des videos de chats a 3h du mat' },
-    { word: 'souris',    diff: 'medium', hint: 'Tu la bouges sur le bureau mais elle ne mange pas de fromage' },
-    { word: 'baguette',  diff: 'medium', hint: 'Pain long et croustillant, symbole de la France dans le monde' },
+    // === MOYEN (6-8 lettres) — indice court, juste un mot-cle ===
+    { word: 'girafe',    diff: 'medium', hint: 'Animal au long cou' },
+    { word: 'banane',    diff: 'medium', hint: 'Fruit jaune courbe' },
+    { word: 'zombie',    diff: 'medium', hint: 'Mort-vivant affame' },
+    { word: 'volcan',    diff: 'medium', hint: 'Montagne de feu' },
+    { word: 'miroir',    diff: 'medium', hint: 'Reflet de soi' },
+    { word: 'valise',    diff: 'medium', hint: 'Bagage de voyage' },
+    { word: 'tresor',    diff: 'medium', hint: 'Or cache des pirates' },
+    { word: 'guitare',   diff: 'medium', hint: 'Instrument a cordes' },
+    { word: 'vampire',   diff: 'medium', hint: 'Buveur de sang nocturne' },
+    { word: 'hamster',   diff: 'medium', hint: 'Rongeur a roue' },
+    { word: 'fantome',   diff: 'medium', hint: 'Esprit qui hante' },
+    { word: 'licorne',   diff: 'medium', hint: 'Cheval a corne magique' },
+    { word: 'fromage',   diff: 'medium', hint: 'Produit laitier francais' },
+    { word: 'tornade',   diff: 'medium', hint: 'Vent en spirale' },
+    { word: 'karate',    diff: 'medium', hint: 'Art martial japonais' },
+    { word: 'dominos',   diff: 'medium', hint: 'Pieces qui tombent en cascade' },
+    { word: 'chocolat',  diff: 'medium', hint: 'Douceur au cacao' },
+    { word: 'football',  diff: 'medium', hint: 'Sport avec ballon rond' },
+    { word: 'escalier',  diff: 'medium', hint: 'Marches a monter' },
+    { word: 'batterie',  diff: 'medium', hint: 'Source d\'energie portable' },
+    { word: 'internet',  diff: 'medium', hint: 'Reseau mondial connecte' },
+    { word: 'souris',    diff: 'medium', hint: 'Peripherique a clic' },
+    { word: 'baguette',  diff: 'medium', hint: 'Pain francais long' },
 
-    // === DIFFICILE (9+ lettres) ===
-    { word: 'crocodile',    diff: 'hard', hint: 'Reptile qui sourit tout le temps mais vaut mieux pas s\'approcher' },
-    { word: 'papillon',     diff: 'hard', hint: 'Avant il rampait, maintenant il vole avec des ailes colorees' },
-    { word: 'parapluie',    diff: 'hard', hint: 'On l\'oublie quand il pleut et on le perd quand il fait beau' },
-    { word: 'chaussette',   diff: 'hard', hint: 'Toujours par deux mais il en manque une apres la lessive' },
-    { word: 'spaghetti',    diff: 'hard', hint: 'Pates longues et fines, impossibles a manger proprement' },
-    { word: 'trampoline',   diff: 'hard', hint: 'Tu sautes dessus et tu touches presque le ciel' },
-    { word: 'moustache',    diff: 'hard', hint: 'Poils au-dessus de la levre, style Mario Bros ou Dali' },
-    { word: 'dinosaure',    diff: 'hard', hint: 'Gros lezard disparu il y a 65 millions d\'annees' },
-    { word: 'astronaute',   diff: 'hard', hint: 'Metier de reve : voyager dans l\'espace en apesanteur' },
-    { word: 'squelette',    diff: 'hard', hint: 'Tu en as un a l\'interieur de toi, 206 os en tout' },
-    { word: 'dictionnaire', diff: 'hard', hint: 'Le livre qui connait tous les mots, il a reponse a tout' },
-    { word: 'croissant',    diff: 'hard', hint: 'Viennoiserie doree en forme de lune, star du petit-dej' },
-    { word: 'ordinateur',   diff: 'hard', hint: 'Machine qui fait tout et qui plante toujours au pire moment' },
-    { word: 'toboggan',     diff: 'hard', hint: 'Tu montes par l\'echelle et tu redescends en glissant' },
-    { word: 'telescope',    diff: 'hard', hint: 'Tube magique pour voir les etoiles et les planetes de loin' },
-    { word: 'avalanche',    diff: 'hard', hint: 'Enorme masse de neige qui devale la montagne a fond' },
-    { word: 'pyramide',     diff: 'hard', hint: 'Construction triangulaire en Egypte, les pharaons y dormaient' },
-    { word: 'sorciere',     diff: 'hard', hint: 'Vole sur un balai, a un chat noir et prepare des potions' },
-    { word: 'cameleon',     diff: 'hard', hint: 'Le roi du deguisement, il change de couleur comme de chemise' },
-    { word: 'lunettes',     diff: 'hard', hint: 'T\'aident a voir clair mais tu les cherches sur ta tete' }
+    // === DIFFICILE (9+ lettres) — AUCUN indice ===
+    { word: 'crocodile',    diff: 'hard', hint: '' },
+    { word: 'papillon',     diff: 'hard', hint: '' },
+    { word: 'parapluie',    diff: 'hard', hint: '' },
+    { word: 'chaussette',   diff: 'hard', hint: '' },
+    { word: 'spaghetti',    diff: 'hard', hint: '' },
+    { word: 'trampoline',   diff: 'hard', hint: '' },
+    { word: 'moustache',    diff: 'hard', hint: '' },
+    { word: 'dinosaure',    diff: 'hard', hint: '' },
+    { word: 'astronaute',   diff: 'hard', hint: '' },
+    { word: 'squelette',    diff: 'hard', hint: '' },
+    { word: 'dictionnaire', diff: 'hard', hint: '' },
+    { word: 'croissant',    diff: 'hard', hint: '' },
+    { word: 'ordinateur',   diff: 'hard', hint: '' },
+    { word: 'toboggan',     diff: 'hard', hint: '' },
+    { word: 'telescope',    diff: 'hard', hint: '' },
+    { word: 'avalanche',    diff: 'hard', hint: '' },
+    { word: 'pyramide',     diff: 'hard', hint: '' },
+    { word: 'sorciere',     diff: 'hard', hint: '' },
+    { word: 'cameleon',     diff: 'hard', hint: '' },
+    { word: 'lunettes',     diff: 'hard', hint: '' }
   ];
 
   const ALPHABET = 'abcdefghijklmnopqrstuvwxyz';
 
-  // Elements DOM pour l'indice
+  // Elements DOM
   const hintEl = document.getElementById('pendu-hint');
+  const goldEl = document.getElementById('pendu-gold');
 
   // Etat du jeu
   let currentEntry = null;
@@ -443,6 +447,65 @@ const PenduGame = (() => {
   let errors = 0;
   let gameOver = false;
 
+  // --- Systeme d'or ---
+
+  /** Charge l'or depuis localStorage. */
+  function loadGold() {
+    gold = parseInt(localStorage.getItem(GOLD_STORAGE_KEY), 10) || 0;
+  }
+
+  /** Sauvegarde l'or. */
+  function saveGold() {
+    localStorage.setItem(GOLD_STORAGE_KEY, gold);
+  }
+
+  /** Met a jour l'affichage de l'or partout. */
+  function renderGold() {
+    document.querySelectorAll('.pendu__gold-amount').forEach(el => {
+      el.textContent = gold;
+    });
+  }
+
+  /** Ajoute de l'or avec animation. */
+  function addGold(amount) {
+    gold += amount;
+    saveGold();
+    renderGold();
+    // Animation du compteur
+    if (goldEl) {
+      goldEl.classList.remove('bump');
+      void goldEl.offsetWidth;
+      goldEl.classList.add('bump');
+    }
+  }
+
+  /** Verifie si un niveau est debloque. */
+  function isLevelUnlocked(level) {
+    return gold >= LEVELS[level].unlockCost;
+  }
+
+  /** Met a jour l'etat des boutons de difficulte. */
+  function renderLevelButtons() {
+    document.querySelectorAll('[data-level]').forEach(btn => {
+      const level = btn.dataset.level;
+      const cfg = LEVELS[level];
+      const unlocked = isLevelUnlocked(level);
+      const lockInfo = btn.querySelector('.pendu__level-lock');
+
+      if (unlocked) {
+        btn.disabled = false;
+        btn.classList.remove('pendu__level-btn--locked');
+        if (lockInfo) lockInfo.textContent = `+${cfg.reward} 🪙 par victoire`;
+      } else {
+        btn.disabled = true;
+        btn.classList.add('pendu__level-btn--locked');
+        if (lockInfo) lockInfo.textContent = `🔒 ${cfg.unlockCost} 🪙 pour debloquer (${gold}/${cfg.unlockCost})`;
+      }
+    });
+  }
+
+  // --- Jeu ---
+
   /** Choisit un mot aleatoire selon la difficulte. */
   function pickWord() {
     const pool = WORDS.filter(w => w.diff === currentLevel);
@@ -450,9 +513,15 @@ const PenduGame = (() => {
     return currentEntry.word;
   }
 
-  /** Affiche l'indice. */
+  /** Affiche l'indice ou cache la zone si pas d'indice. */
   function renderHint() {
-    hintEl.textContent = currentEntry ? currentEntry.hint : '';
+    if (currentLevel === 'hard' || !currentEntry.hint) {
+      hintContainer.classList.add('hidden');
+    } else {
+      hintContainer.classList.remove('hidden');
+      hintContainer.classList.remove('pendu__hint--hidden');
+      hintEl.textContent = currentEntry.hint;
+    }
   }
 
   /** Construit l'affichage du mot (lettres trouvees + tirets). */
@@ -558,7 +627,9 @@ const PenduGame = (() => {
 
   /** Victoire. */
   function triggerVictory() {
-    showMessage(`Bravo ${playerName} 🎉 Le mot était « ${currentWord} » !`, 'success');
+    const reward = LEVELS[currentLevel].reward;
+    addGold(reward);
+    showMessage(`Bravo ${playerName} 🎉 Le mot était « ${currentWord} » ! +${reward} 🪙`, 'success');
     endGame();
     card.classList.add('victory');
     launchConfetti();
@@ -616,18 +687,7 @@ const PenduGame = (() => {
     renderHint();
     renderWord();
     renderKeyboard();
-
-    // Mode difficile : cacher l'indice
-    if (currentLevel === 'hard') {
-      hintContainer.classList.add('pendu__hint--hidden');
-      const revealHint = () => {
-        hintContainer.classList.remove('pendu__hint--hidden');
-        hintContainer.removeEventListener('click', revealHint);
-      };
-      hintContainer.addEventListener('click', revealHint);
-    } else {
-      hintContainer.classList.remove('pendu__hint--hidden');
-    }
+    renderGold();
   }
 
   /** Gestion du clavier physique. */
@@ -669,6 +729,8 @@ const PenduGame = (() => {
    * @param {string} level — 'easy' | 'medium' | 'hard'
    */
   function startGame(level) {
+    if (!isLevelUnlocked(level)) return;
+
     currentLevel = level;
     const cfg = LEVELS[level];
     maxErrors = cfg.maxErrors;
@@ -692,6 +754,8 @@ const PenduGame = (() => {
     gameScreen.classList.add('hidden');
     introScreen.classList.add('hidden');
     diffNameEl.textContent = `🎮 ${playerName}`;
+    renderGold();
+    renderLevelButtons();
   }
 
   /** Revient a l'ecran d'intro (premier lancement). */
@@ -705,6 +769,9 @@ const PenduGame = (() => {
 
   /** Initialise le jeu. */
   function init() {
+    // Charger l'or sauvegarde
+    loadGold();
+
     // Ecouteurs intro
     startBtn.addEventListener('click', goToDifficulty);
     nameInput.addEventListener('keydown', (e) => {
@@ -725,6 +792,7 @@ const PenduGame = (() => {
     renderHint();
     renderWord();
     renderKeyboard();
+    renderGold();
   }
 
   /** Appele quand on entre dans l'ecran. */
