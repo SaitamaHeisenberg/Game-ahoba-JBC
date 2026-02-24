@@ -365,9 +365,9 @@ const PenduGame = (() => {
              'pendu-left-arm', 'pendu-right-arm']
   };
 
-  // Banque de mots : hint = indice long (facile), shortHint = indice court (moyen)
+  // Banque de mots : hint = indice long (facile), hint court (moyen), aucun (difficile)
   const WORDS = [
-    // === FACILE (4-5 lettres) — indice long et genereux ===
+    // === FACILE (4-6 lettres) — 40 mots, indice long et genereux ===
     { word: 'chat',    diff: 'easy', hint: 'Petit felin domestique qui ronronne et dort 16h par jour' },
     { word: 'lune',    diff: 'easy', hint: 'Boule blanche dans le ciel la nuit, les loups lui parlent' },
     { word: 'robot',   diff: 'easy', hint: 'Machine qui pourrait te remplacer au travail, bip boup bip' },
@@ -386,8 +386,30 @@ const PenduGame = (() => {
     { word: 'reine',   diff: 'easy', hint: 'Femme qui porte une couronne et dirige un royaume' },
     { word: 'orage',   diff: 'easy', hint: 'Eclairs, pluie et gros bruit, les chiens se cachent sous le lit' },
     { word: 'selfie',  diff: 'easy', hint: 'Photo de toi par toi-meme, le bras tendu ou avec un baton' },
+    { word: 'singe',   diff: 'easy', hint: 'Animal qui adore les bananes et fait des grimaces' },
+    { word: 'globe',   diff: 'easy', hint: 'Boule qui represente la Terre, tourne sur un axe' },
+    { word: 'peche',   diff: 'easy', hint: 'Fruit doux et juteux, rose orangee avec un noyau' },
+    { word: 'avion',   diff: 'easy', hint: 'Ca vole dans le ciel avec des ailes et des reacteurs' },
+    { word: 'train',   diff: 'easy', hint: 'Roule sur des rails et fait tchou-tchou' },
+    { word: 'foret',   diff: 'easy', hint: 'Plein d\'arbres, de champignons et de loups' },
+    { word: 'herbe',   diff: 'easy', hint: 'Tapis vert naturel, les vaches adorent la manger' },
+    { word: 'sucre',   diff: 'easy', hint: 'Poudre blanche et douce, on en met dans le cafe' },
+    { word: 'piano',   diff: 'easy', hint: 'Instrument avec des touches blanches et noires' },
+    { word: 'vague',   diff: 'easy', hint: 'Mouvement de la mer qui fait surfer les gens' },
+    { word: 'corde',   diff: 'easy', hint: 'Les cowboys en font un lasso, les enfants sautent dessus' },
+    { word: 'lampe',   diff: 'easy', hint: 'Objet qui eclaire quand tu appuies sur le bouton' },
+    { word: 'perle',   diff: 'easy', hint: 'Petite boule precieuse qui vient de l\'huitre' },
+    { word: 'phare',   diff: 'easy', hint: 'Grande tour lumineuse au bord de la mer pour les bateaux' },
+    { word: 'frigo',   diff: 'easy', hint: 'Garde ta nourriture au frais, on l\'ouvre 20 fois par jour' },
+    { word: 'table',   diff: 'easy', hint: 'Meuble ou on mange, travaille et pose tout son bazar' },
+    { word: 'boule',   diff: 'easy', hint: 'Objet rond, on en fait avec la neige ou au bowling' },
+    { word: 'tigre',   diff: 'easy', hint: 'Grand felin raye, le plus gros des chats sauvages' },
+    { word: 'epice',   diff: 'easy', hint: 'Poudre qui donne du gout aux plats, parfois ca pique' },
+    { word: 'bulle',   diff: 'easy', hint: 'Ronde et transparente, le savon en fait plein' },
+    { word: 'loupe',   diff: 'easy', hint: 'Verre qui grossit tout, Sherlock Holmes en a une' },
+    { word: 'koala',   diff: 'easy', hint: 'Animal australien tout mignon accroche aux arbres' },
 
-    // === MOYEN (6-8 lettres) — indice court, juste un mot-cle ===
+    // === MOYEN (6-8 lettres) — 40 mots, indice court ===
     { word: 'girafe',    diff: 'medium', hint: 'Animal au long cou' },
     { word: 'banane',    diff: 'medium', hint: 'Fruit jaune courbe' },
     { word: 'zombie',    diff: 'medium', hint: 'Mort-vivant affame' },
@@ -411,8 +433,25 @@ const PenduGame = (() => {
     { word: 'internet',  diff: 'medium', hint: 'Reseau mondial connecte' },
     { word: 'souris',    diff: 'medium', hint: 'Peripherique a clic' },
     { word: 'baguette',  diff: 'medium', hint: 'Pain francais long' },
+    { word: 'requin',    diff: 'medium', hint: 'Predateur des oceans' },
+    { word: 'cascade',   diff: 'medium', hint: 'Eau qui tombe de haut' },
+    { word: 'piscine',   diff: 'medium', hint: 'Bassin pour nager' },
+    { word: 'baleine',   diff: 'medium', hint: 'Plus grand animal vivant' },
+    { word: 'panther',   diff: 'medium', hint: 'Felin noir de la jungle' },
+    { word: 'chameau',   diff: 'medium', hint: 'Animal a bosses du desert' },
+    { word: 'coussin',   diff: 'medium', hint: 'Moelleux pour la tete' },
+    { word: 'cactus',    diff: 'medium', hint: 'Plante piquante du desert' },
+    { word: 'bowling',   diff: 'medium', hint: 'Sport avec des quilles' },
+    { word: 'popcorn',   diff: 'medium', hint: 'Mais eclate du cinema' },
+    { word: 'cigogne',   diff: 'medium', hint: 'Oiseau qui apporte les bebes' },
+    { word: 'renard',    diff: 'medium', hint: 'Ruse a queue touffue' },
+    { word: 'tonnerre',  diff: 'medium', hint: 'Bruit apres l\'eclair' },
+    { word: 'medaille',  diff: 'medium', hint: 'Recompense des champions' },
+    { word: 'monstre',   diff: 'medium', hint: 'Creature qui fait peur' },
+    { word: 'magicien',  diff: 'medium', hint: 'Chapeau et baguette' },
+    { word: 'jardin',    diff: 'medium', hint: 'Espace vert avec des fleurs' },
 
-    // === DIFFICILE (9+ lettres) — AUCUN indice ===
+    // === DIFFICILE (7+ lettres) — 40 mots, AUCUN indice ===
     { word: 'crocodile',    diff: 'hard', hint: '' },
     { word: 'papillon',     diff: 'hard', hint: '' },
     { word: 'parapluie',    diff: 'hard', hint: '' },
@@ -432,7 +471,27 @@ const PenduGame = (() => {
     { word: 'pyramide',     diff: 'hard', hint: '' },
     { word: 'sorciere',     diff: 'hard', hint: '' },
     { word: 'cameleon',     diff: 'hard', hint: '' },
-    { word: 'lunettes',     diff: 'hard', hint: '' }
+    { word: 'lunettes',     diff: 'hard', hint: '' },
+    { word: 'tournesol',    diff: 'hard', hint: '' },
+    { word: 'kangourou',    diff: 'hard', hint: '' },
+    { word: 'bouilloire',   diff: 'hard', hint: '' },
+    { word: 'ceinture',     diff: 'hard', hint: '' },
+    { word: 'araignee',     diff: 'hard', hint: '' },
+    { word: 'champignon',   diff: 'hard', hint: '' },
+    { word: 'grenouille',   diff: 'hard', hint: '' },
+    { word: 'moustique',    diff: 'hard', hint: '' },
+    { word: 'bretelles',    diff: 'hard', hint: '' },
+    { word: 'cheminee',     diff: 'hard', hint: '' },
+    { word: 'naufrage',     diff: 'hard', hint: '' },
+    { word: 'tournevis',    diff: 'hard', hint: '' },
+    { word: 'guirlande',    diff: 'hard', hint: '' },
+    { word: 'pipelette',    diff: 'hard', hint: '' },
+    { word: 'catapulte',    diff: 'hard', hint: '' },
+    { word: 'coccinelle',   diff: 'hard', hint: '' },
+    { word: 'libellule',    diff: 'hard', hint: '' },
+    { word: 'framboise',    diff: 'hard', hint: '' },
+    { word: 'mandarine',    diff: 'hard', hint: '' },
+    { word: 'bricolage',    diff: 'hard', hint: '' }
   ];
 
   const ALPHABET = 'abcdefghijklmnopqrstuvwxyz';
@@ -468,8 +527,9 @@ const PenduGame = (() => {
     });
   }
 
-  /** Ajoute de l'or avec animation. */
+  /** Ajoute de l'or avec animation et detecte les deblocages. */
   function addGold(amount) {
+    const oldGold = gold;
     gold += amount;
     saveGold();
     renderGold();
@@ -479,6 +539,46 @@ const PenduGame = (() => {
       void goldEl.offsetWidth;
       goldEl.classList.add('bump');
     }
+    // Verifier si un nouveau niveau vient d'etre debloque
+    checkUnlock(oldGold, gold);
+  }
+
+  /** Verifie et annonce le deblocage d'un nouveau niveau. */
+  function checkUnlock(oldGold, newGold) {
+    const levels = [
+      { key: 'medium', cost: LEVELS.medium.unlockCost, name: 'Moyen', emoji: '🤔' },
+      { key: 'hard',   cost: LEVELS.hard.unlockCost,   name: 'Difficile', emoji: '💀' }
+    ];
+    for (const lvl of levels) {
+      if (oldGold < lvl.cost && newGold >= lvl.cost) {
+        // Nouveau niveau debloque !
+        setTimeout(() => showUnlockBanner(lvl), 1800);
+        break;
+      }
+    }
+  }
+
+  /** Affiche un bandeau de deblocage de niveau. */
+  function showUnlockBanner(lvl) {
+    // Creer l'overlay
+    const banner = document.createElement('div');
+    banner.className = 'unlock-banner';
+    banner.innerHTML = `
+      <div class="unlock-banner__content">
+        <span class="unlock-banner__emoji">${lvl.emoji}</span>
+        <h3 class="unlock-banner__title">Niveau debloque !</h3>
+        <p class="unlock-banner__text">Le mode <strong>${lvl.name}</strong> est maintenant disponible !</p>
+        <p class="unlock-banner__sub">Continue comme ca ${playerName} !</p>
+      </div>
+    `;
+    document.body.appendChild(banner);
+    launchConfetti();
+
+    // Retirer apres 3.5 secondes
+    setTimeout(() => {
+      banner.classList.add('unlock-banner--out');
+      setTimeout(() => banner.remove(), 500);
+    }, 3500);
   }
 
   /** Verifie si un niveau est debloque. */
