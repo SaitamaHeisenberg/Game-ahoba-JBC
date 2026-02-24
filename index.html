@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devine le Nombre</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Particules de victoire -->
+  <div id="confetti-container" class="confetti-container"></div>
+
+  <main class="app">
+    <div class="card">
+
+      <!-- En-tete -->
+      <div class="card__header">
+        <span class="card__icon">🎯</span>
+        <h1 class="card__title">Devine le Nombre</h1>
+        <p class="card__subtitle">Trouve le nombre secret entre 1 et 10</p>
+      </div>
+
+      <!-- Compteur d'essais -->
+      <div class="attempts">
+        <span class="attempts__label">Essais</span>
+        <span class="attempts__count" id="attempts-count">0</span>
+      </div>
+
+      <!-- Zone de saisie -->
+      <div class="input-group">
+        <input
+          type="number"
+          id="guess-input"
+          class="input-group__field"
+          min="1"
+          max="10"
+          placeholder="1 — 10"
+          autocomplete="off"
+        >
+        <button id="guess-btn" class="btn btn--primary">
+          <span class="btn__text">Deviner</span>
+          <span class="btn__icon">→</span>
+        </button>
+      </div>
+
+      <!-- Message dynamique -->
+      <div id="message" class="message" aria-live="polite"></div>
+
+      <!-- Bouton recommencer -->
+      <button id="restart-btn" class="btn btn--ghost hidden">
+        <span class="btn__text">Recommencer</span>
+        <span class="btn__icon">↻</span>
+      </button>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2026 Lynasoft &mdash; Projet d&eacute;velopp&eacute; par Ahoba Ehouman JbC</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
