@@ -816,6 +816,42 @@ body::before {
   to   { opacity: 1; transform: scale(1); }
 }
 
+/* Indice */
+.pendu__hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  background: rgba(255, 169, 77, 0.06);
+  border: 1px solid rgba(255, 169, 77, 0.15);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1rem;
+  width: 100%;
+  animation: hintIn 0.5s 0.2s var(--ease-out) both;
+}
+
+@keyframes hintIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pendu__hint-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-warning);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.pendu__hint-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
 /* Mot a deviner */
 .pendu__word {
   display: flex;

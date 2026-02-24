@@ -328,21 +328,57 @@ const PenduGame = (() => {
 
   const MAX_ERRORS = 6;
 
-  // Banque de mots (francais, sans accents pour simplifier le clavier)
+  // Banque de mots avec indices { word, hint }
   const WORDS = [
-    'javascript', 'python', 'ordinateur', 'clavier', 'souris',
-    'ecran', 'programme', 'internet', 'serveur', 'logiciel',
-    'tableau', 'fonction', 'variable', 'boucle', 'fichier',
-    'reseau', 'donnees', 'memoire', 'disque', 'pixel',
-    'navigateur', 'console', 'terminal', 'binaire', 'algorithme',
-    'matrice', 'syntaxe', 'module', 'paquet', 'classe',
-    'objet', 'methode', 'chaine', 'nombre', 'index',
-    'projet', 'version', 'branche', 'fusion', 'conflit'
+    { word: 'javascript', hint: 'Langage de programmation web' },
+    { word: 'python',     hint: 'Langage nomme d\'apres un serpent' },
+    { word: 'ordinateur', hint: 'Machine de calcul electronique' },
+    { word: 'clavier',    hint: 'Peripherique avec des touches' },
+    { word: 'souris',     hint: 'On clique avec' },
+    { word: 'ecran',      hint: 'Surface d\'affichage' },
+    { word: 'programme',  hint: 'Suite d\'instructions' },
+    { word: 'internet',   hint: 'Reseau mondial' },
+    { word: 'serveur',    hint: 'Machine qui repond aux requetes' },
+    { word: 'logiciel',   hint: 'Application informatique' },
+    { word: 'tableau',    hint: 'Structure de donnees ordonnee' },
+    { word: 'fonction',   hint: 'Bloc de code reutilisable' },
+    { word: 'variable',   hint: 'Conteneur pour une valeur' },
+    { word: 'boucle',     hint: 'Repete des instructions' },
+    { word: 'fichier',    hint: 'Document stocke sur disque' },
+    { word: 'reseau',     hint: 'Ensemble d\'appareils connectes' },
+    { word: 'donnees',    hint: 'Informations numeriques' },
+    { word: 'memoire',    hint: 'Stockage temporaire rapide' },
+    { word: 'disque',     hint: 'Support de stockage permanent' },
+    { word: 'pixel',      hint: 'Plus petit point d\'une image' },
+    { word: 'navigateur', hint: 'Chrome, Firefox, Safari...' },
+    { word: 'console',    hint: 'Interface en ligne de commande' },
+    { word: 'terminal',   hint: 'Fenetre pour taper des commandes' },
+    { word: 'binaire',    hint: 'Systeme avec des 0 et des 1' },
+    { word: 'algorithme', hint: 'Methode de resolution pas a pas' },
+    { word: 'matrice',    hint: 'Tableau a deux dimensions' },
+    { word: 'syntaxe',    hint: 'Regles d\'ecriture d\'un langage' },
+    { word: 'module',     hint: 'Morceau de code independant' },
+    { word: 'paquet',     hint: 'Bibliotheque a installer' },
+    { word: 'classe',     hint: 'Modele pour creer des objets' },
+    { word: 'objet',      hint: 'Instance d\'une classe' },
+    { word: 'methode',    hint: 'Fonction attachee a un objet' },
+    { word: 'chaine',     hint: 'Suite de caracteres' },
+    { word: 'nombre',     hint: 'Valeur numerique' },
+    { word: 'index',      hint: 'Position dans une liste' },
+    { word: 'projet',     hint: 'Ensemble de fichiers de code' },
+    { word: 'version',    hint: 'Etat d\'un logiciel a un moment' },
+    { word: 'branche',    hint: 'Ligne de developpement Git' },
+    { word: 'fusion',     hint: 'Combine deux branches Git' },
+    { word: 'conflit',    hint: 'Quand Git ne peut pas fusionner' }
   ];
 
   const ALPHABET = 'abcdefghijklmnopqrstuvwxyz';
 
+  // Elements DOM pour l'indice
+  const hintEl = document.getElementById('pendu-hint');
+
   // Etat du jeu
+  let currentEntry = null;
   let currentWord = '';
   let guessedLetters = new Set();
   let errors = 0;
@@ -350,7 +386,13 @@ const PenduGame = (() => {
 
   /** Choisit un mot aleatoire. */
   function pickWord() {
-    return WORDS[Math.floor(Math.random() * WORDS.length)];
+    currentEntry = WORDS[Math.floor(Math.random() * WORDS.length)];
+    return currentEntry.word;
+  }
+
+  /** Affiche l'indice. */
+  function renderHint() {
+    hintEl.textContent = currentEntry ? currentEntry.hint : '';
   }
 
   /** Construit l'affichage du mot (lettres trouvees + tirets). */
@@ -510,6 +552,7 @@ const PenduGame = (() => {
     restartBtn.classList.add('hidden');
     card.classList.remove('victory', 'defeat');
     confettiContainer.innerHTML = '';
+    renderHint();
     renderWord();
     renderKeyboard();
   }
@@ -532,6 +575,7 @@ const PenduGame = (() => {
     restartBtn.addEventListener('click', reset);
     document.addEventListener('keydown', handleKeyPress);
     currentWord = pickWord();
+    renderHint();
     renderWord();
     renderKeyboard();
   }
